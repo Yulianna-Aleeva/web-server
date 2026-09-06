@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Заказы — Магазин</title>
+  <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/static/css/style.css" rel="stylesheet">
+  <link href="/static/css/ai_chat.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container-fluid p-0">
+    <div class="d-flex">
+      <!-- Левая колонка: Динамическое боковое меню -->
+      <div id="main-menu" class="bg-dark text-white p-4"></div>
+
+      <!-- Правая колонка: Корзина + история заказов -->
+      <div class="content-shifted p-5">
+        <h1 class="mb-5 border-bottom pb-3 fw-bold">Мои заказы</h1>
+
+        <!-- Корзина -->
+        <div id="cart" class="mb-5">
+          <h2 class="h3 mb-4 title-toys fw-bold"><span class="emoji-cart"></span> Корзина</h2>
+          <div id="cart-content"></div>
+        </div>
+
+        <!-- История заказов -->
+        <div id="history">
+          <h2 class="h3 mb-4 fw-bold">История заказов</h2>
+          <div id="orders-content"></div>
+        </div>
+
+        <!-- Кнопка вызова робота-помощника -->
+        <div class="position-fixed bottom-0 end-0 m-4" style="z-index: 1060;">
+          <button class="btn btn-primary btn-lg shadow d-flex align-items-center gap-2">
+            <span class="emoji-robot"></span> ИИ-Ассистент
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/js/bootstrap.bundle.min.js"></script>
+  <script src="/static/js/emojis.js"></script>
+  <script src="/static/js/products.js"></script>
+  <script src="/static/js/menu.js"></script>
+  <script src="/static/js/store.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      document.querySelector(".emoji-robot").textContent = EMOJIS.AI_ROBOT;
+      document.querySelector(".emoji-cart").textContent = EMOJIS.CART;
+      const RUB = EMOJIS.RUBLE;
+      const cartBox = document.getElementById("cart-content");
+      const ordersBox = document.getElementById("orders-content");
+
+      // Корзина: количество (− 1 +), удаление, итоговая сумма
+      function renderCart() {
+        const cart = Store.getCart();
+        if (!cart.length) {
+          cartBox.innerHTML = `<p class="text-muted">Корзина пуста. <a href="/categories#toys">Перейти к репликам игр →</a></p>`;
+          return;
+        }
+        const rows = cart.map(line => {
+          const p = Store.findProduct(line.id);
+          return `
+            <tr class="border-bottom">
+              <td><div class="fw-bold">${p.name}</div><div class="small text-muted">${p.desc}</div></td>
+              <td>${p.price} ${RUB}</td>
+              <td>
+                <div class="btn-group btn-group-sm" role="group">
+                  <button type="button" class="btn btn-outline-secondary" data-qty="-1" data-cart-id="${p.id}">−</button>
+                  <span class="btn btn-outline-secondary disabled text-dark fw-bold" style="min-width: 2.5rem;">${line.qty}</span>
+                  <button type="button" class="btn btn-outline-secondary" data-qty="1" data-cart-id="${p.id}">+</button>
+                </div>
+              </td>
+              <td class="fw-bold">${p.price * line.qty} ${RUB}</td>
+              <td class="text-end"><button type="button" class="btn btn-link p-0" title="Удалить" data-remove="${p.id}">${EMOJIS.TRASH}</button></td>
+            </tr>`;
+        }).join("");
+        cartBox.innerHTML = `
+          <div class="table-responsive shadow-sm rounded mb-3">
+            <table class="table align-middle mb-0">
+              <thead>
+                <tr class="border-bottom border-secondary">
+                  <th scope="col" class="fw-bold text-dark">Товар</th>
+                  <th scope="col" class="fw-bold text-dark">Цена</th>
+                  <th scope="col" class="fw-bold text-dark">Кол-во</th>
+                  <th scope="col" class="fw-bold text-dark">Сумма</th>
+                  <th scope="col"></th>
+                </tr>
+              </thead>
+              <tbody>${rows}</tbody>
+            </table>
+          </div>
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="fs-5">Итоговая сумма: <b>${Store.cartTotal()} ${RUB}</b></span>
+            <button type="button" id="checkout-btn" class="btn btn-primary fw-bold px-4">Оформить заказ</button>
+          </div>`;
+      }
+
+      // История заказов (новые сверху)
+      function renderOrders() {
+        const orders = Store.getOrders();
+        if (!orders.length) {
+          ordersBox.innerHTML = `<p class="text-muted">Заказов пока нет.</p>`;
+          return;
+        }
+        const rows = orders.map(o => `
+          <tr class="border-bottom">
+            <th scope="row" class="text-secondary fw-normal">#${o.number}</th>
+            <td class="${o.category === "cookies" ? "fw-bold" : ""}">${o.name}</td>
+            <td>${Store.CATEGORY_TITLES[o.category] || o.category}</td>
+            <td>${o.price} ${EMOJIS[o.currency] || o.currency}</td>
+            <td><span class="${Store.STATUS_CLASS[o.category] || ""} py-1 px-3 d-inline-block fs-6">${o.status}</span></td>
+          </tr>`).join("");
+        ordersBox.innerHTML = `
+          <div class="table-responsive shadow-sm rounded">
+            <table class="table align-middle mb-0">
+              <thead>
+                <tr class="border-bottom border-secondary">
+                  <th scope="col" class="fw-bold text-secondary">Номер</th>
+                  <th scope="col" class="fw-bold text-dark">Товар</th>
+                  <th scope="col" class="fw-bold text-dark">Категория</th>
+                  <th scope="col" class="fw-bold text-dark">Стоимость</th>
+                  <th scope="col" class="fw-bold text-dark">Статус</th>
+                </tr>
+              </thead>
+              <tbody>${rows}</tbody>
+            </table>
+          </div>`;
+      }
+
+      cartBox.addEventListener("click", function(e) {
+        const qtyBtn = e.target.closest("[data-qty]");
+        if (qtyBtn) return Store.changeQty(Number(qtyBtn.dataset.cartId), Number(qtyBtn.dataset.qty));
+        const removeBtn = e.target.closest("[data-remove]");
+        if (removeBtn) return Store.removeFromCart(Number(removeBtn.dataset.remove));
+        if (e.target.closest("#checkout-btn")) Store.checkout();
+      });
+
+      document.addEventListener("store:change", () => { renderCart(); renderOrders(); });
+      renderCart();
+      renderOrders();
+    });
+  </script>
+  <script src="/static/js/ai_chat.js"></script>
+</body>
+</html>

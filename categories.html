@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Категории — Магазин</title>
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/style.css" rel="stylesheet">
+    <link href="/static/css/ai_chat.css" rel="stylesheet">
+</head>
+<body>
+<div class="container-fluid p-0">
+    <div class="d-flex">
+        <!-- Левая колонка: Динамическое боковое меню -->
+        <div id="main-menu" class="bg-dark text-white p-4"></div>
+
+        <!-- Правая колонка: Каталог товаров по категориям -->
+        <div class="content-shifted p-5">
+            <h1 class="mb-5 border-bottom pb-3 fw-bold">Каталог товаров</h1>
+
+            <!-- Блок категории: Печеньки -->
+            <div id="cookies" class="mb-5 pt-3">
+                <h2 class="h3 mb-4 title-cookies fw-bold">Печеньки (внутренняя валюта)</h2>
+                <div id="cookies-list" class="row row-cols-1 row-cols-md-3 g-4"></div>
+            </div>
+
+            <!-- Блок категории: Подсказки -->
+            <div id="hints" class="mb-5 pt-3">
+                <h2 class="h3 mb-4 title-hints fw-bold">Подсказки (добавить в игру)</h2>
+                <div id="hints-list" class="row row-cols-1 row-cols-md-4 g-4"></div>
+            </div>
+
+            <!-- Блок категории: Реплики игр -->
+            <div id="toys" class="mb-5 pt-3">
+                <h2 class="h3 mb-4 title-toys fw-bold">Реплики игр (реальные товары)</h2>
+                <div id="toys-list" class="row row-cols-1 row-cols-md-4 g-4"></div>
+            </div>
+
+            <!-- Кнопка вызова робота-помощника -->
+            <div class="position-fixed bottom-0 end-0 m-4" style="z-index: 1060;">
+                <button class="btn btn-primary btn-lg shadow d-flex align-items-center gap-2">
+                    <span class="emoji-robot"></span> ИИ-Ассистент
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/static/js/bootstrap.bundle.min.js"></script>
+<script src="/static/js/emojis.js"></script>
+<script src="/static/js/products.js"></script>
+<script src="/static/js/menu.js"></script>
+<script src="/static/js/store.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelector(".emoji-robot").textContent = EMOJIS.AI_ROBOT;
+
+        // Сборка и вывод карточек для валюты (Печеньки)
+        const cookiesContainer = document.getElementById("cookies-list");
+        CATALOG_DATA.cookies.forEach(item => {
+            cookiesContainer.innerHTML += `
+                <div class="col">
+                    <div class="card h-100 shadow-sm border border-2 border-warning text-center" style="border-radius: 10px;">
+                        <div class="card-body p-4 d-flex flex-column align-items-center justify-content-between">
+                            <h5 class="card-title fs-5 fw-bold mb-2 text-dark">${item.name} ${EMOJIS[item.badge]}</h5>
+                            <p class="card-text price-cookies mb-3">${item.price} ${EMOJIS[item.currency]}</p>
+                            <button class="btn btn-outline-warning btn-sm text-dark w-100 mt-auto py-2 fw-bold text-nowrap" data-id="${item.id}" data-action="${item.actionType}">${item.actionText}</button>
+                        </div>
+                    </div>
+                </div>`;
+        });
+
+        // Сборка и вывод карточек для игровых фич (Подсказки)
+        const hintsContainer = document.getElementById("hints-list");
+        CATALOG_DATA.hints.forEach(item => {
+            hintsContainer.innerHTML += `
+                <div class="col">
+                    <div class="card h-100 shadow-sm border border-2 border-success text-center" style="border-radius: 10px;">
+                        <div class="card-body p-3 d-flex flex-column align-items-center">
+                            <h5 class="card-title fs-5 fw-bold text-dark mb-1">${item.name}</h5>
+                            <p class="card-text text-muted small flex-grow-1 mb-3">${item.desc}</p>
+                            <p class="card-text price-hints mb-3">${item.price} ${EMOJIS[item.currency]}</p>
+                            <button class="btn btn-outline-success btn-sm w-100 mt-auto py-2 fw-bold text-nowrap" data-id="${item.id}" data-action="${item.actionType}">${item.actionText}</button>
+                        </div>
+                    </div>
+                </div>`;
+        });
+
+        // Сборка и вывод карточек для реальных сувениров (Реплики)
+        const toysContainer = document.getElementById("toys-list");
+        CATALOG_DATA.toys.forEach(item => {
+            toysContainer.innerHTML += `
+                <div class="col">
+                    <div class="card h-100 shadow-sm border border-2 border-primary text-center" style="border-radius: 10px;">
+                        <div class="card-body p-3 d-flex flex-column align-items-center">
+                            <h5 class="card-title fs-5 fw-bold text-dark mb-1">${item.name}</h5>
+                            <p class="card-text text-muted small flex-grow-1 mb-3">${item.desc}</p>
+                            <p class="card-text price-toys mb-3">${item.price} ${EMOJIS[item.currency]}</p>
+                            <button class="btn btn-outline-primary btn-sm text-dark w-100 mt-auto py-2 fw-bold text-nowrap" data-id="${item.id}" data-action="${item.actionType}">${item.actionText}</button>
+                        </div>
+                    </div>
+                </div>`;
+        });
+    });
+</script>
+<script src="/static/js/ai_chat.js"></script>
+</body>
+</html>

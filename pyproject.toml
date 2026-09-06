@@ -1,0 +1,16 @@
+[tool.black]
+exclude = ".git/|.venv"
+target-version = ["py310"]
+line-length = 119
+
+[tool.isort]
+profile = "black"
+float_to_top = true
+combine_as_imports = true
+
+[tool.mypy]
+warn_return_any = true
+exclude = ["venv"]
+enable_error_code = ["ignore-without-code"]
+warn_unused_ignores = true
+ignore_missing_imports = true
