@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Контакты — Магазин</title>
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/style.css" rel="stylesheet">
+    <link href="/static/css/ai_chat.css" rel="stylesheet">
+</head>
+<body>
+<div class="container-fluid p-0">
+    <div class="d-flex">
+        <div id="main-menu" class="bg-dark text-white p-4"></div>
+
+        <div class="content-shifted p-5">
+            <h1 class="mb-3 fw-bold">Контакты</h1>
+            <p class="lead text-muted mb-4">Свяжитесь с нами с помощью формы ниже.</p>
+
+            <form action="/contacts/" method="POST" class="mt-4" style="max-width: 500px;">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="name" class="form-label fw-bold">Имя</label>
+                    <input type="text" name="name" id="name" class="form-control" placeholder="Ваше имя" required>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label fw-bold">Email</label>
+                    <input type="email" name="email" id="email" class="form-control" placeholder="example@mail.com"
+                           required>
+                </div>
+                <div class="mb-3">
+                    <label for="message" class="form-label fw-bold">Сообщение</label>
+                    <textarea name="message" id="message" rows="4" class="form-control"
+                              placeholder="Текст вашего сообщения" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary fw-bold px-4 py-2 mt-2">Отправить</button>
+            </form>
+
+            <div class="position-fixed bottom-0 end-0 m-4" style="z-index: 1060;">
+                <button class="btn btn-primary btn-lg shadow d-flex align-items-center gap-2">
+                    <span class="emoji-robot"></span> ИИ-Ассистент
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/static/js/bootstrap.bundle.min.js"></script>
+<script src="/static/js/emojis.js"></script>
+<script src="/static/js/products.js"></script>
+<script src="/static/js/menu.js"></script>
+<script src="/static/js/store.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelector(".emoji-robot").textContent = EMOJIS.AI_ROBOT;
+    });
+</script>
+<script src="/static/js/ai_chat.js"></script>
+</body>
+</html>
