@@ -1,1 +1,8 @@
 name=ЮЮ&email=uu@uu.uu&message=Привет!
+name=Юля&email=uu@uu.uu&message=Приветик!
+name=Юля&email=uu@uu.uu&message=Приветик!
+name=Юля&email=uu@uu.uu&message=Привет!!!
+name=Юля&email=uu@uu.uu&message=Hi!!!
+name=Юля&email=uu@uu.uu&message=Hello!
+name=Юля&email=uu@uu.uu&message=Bye!
+name=ЮЮ&email=uu@uu.uu&message=???
