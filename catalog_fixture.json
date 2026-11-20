@@ -1,0 +1,31 @@
+[
+{
+    "model": "catalog.category",
+    "pk": 1,
+    "fields": {
+        "name": "Ароматерапия",
+        "description": "Эфирные масла и диффузоры для расслабления"
+    }
+},
+{
+    "model": "catalog.category",
+    "pk": 2,
+    "fields": {
+        "name": "СПА и массаж",
+        "description": "Наборы для ванны, скрабы и массажеры"
+    }
+},
+{
+    "model": "catalog.product",
+    "pk": 1,
+    "fields": {
+        "name": "Масло лаванды",
+        "description": "100% натуральное эфирное масло для сна",
+        "image": "",
+        "category": 1,
+        "price": "790.00",
+        "created_at": "2026-11-20T14:39:55.510Z",
+        "updated_at": "2026-11-20T14:44:11.106Z"
+    }
+}
+]
