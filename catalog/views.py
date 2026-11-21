@@ -1,14 +1,18 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
+from django.core.paginator import Paginator
 from .forms import ProductForm
 from .models import Product, Contact
 
 
 def home(request):
-    products = Product.objects.all()
+    products_list = Product.objects.all()
+    paginator = Paginator(products_list, 3)  # по 3 товара на страницу
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     latest_products = Product.objects.order_by('-created_at')[:5]
     print("Последние 5 товаров:", latest_products)
-    return render(request, 'catalog/home.html', {'products': products})
+    return render(request, 'catalog/home.html', {'page_obj': page_obj})
 
 
 def contacts(request):
