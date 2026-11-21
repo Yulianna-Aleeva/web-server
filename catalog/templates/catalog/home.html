@@ -5,7 +5,8 @@
 {% block content %}
 <div class="text-center mb-5">
     <h1 class="display-3 fw-normal mb-3">Добро пожаловать в магазин "MY-RELAX"!</h1>
-    <p class="lead text-muted fs-4">Здесь вы найдете игровые Печеньки, подсказки для любимых игр и реальные товары по их мотивам.</p>
+    <p class="lead text-muted fs-4">Здесь вы найдете игровые Печеньки, подсказки для любимых игр и реальные товары по их
+        мотивам.</p>
     <hr class="my-4">
     <p class="text-secondary">← Воспользуйтесь боковым меню для перехода в нужный раздел.</p>
 </div>
@@ -50,50 +51,53 @@
     <h2 class="fw-bold mb-0">Наши товары для релакса:</h2>
     <a href="{% url 'catalog:product_create' %}" class="btn btn-success fw-bold">+ Добавить товар</a>
 </div>
-<div class="row g-4">
-    {% for product in page_obj %}
-    <div class="col-md-4">
-        <div class="card h-100 shadow-sm border-0" style="border-radius: 10px;">
-            {% if product.image %}
-            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover; border-top-left-radius: 10px; border-top-right-radius: 10px;">
-            {% endif %}
-            <div class="card-body d-flex flex-column">
-                <span class="badge bg-secondary align-self-start mb-2">{{ product.category.name }}</span>
-                <h5 class="card-title fw-bold">{{ product.name }}</h5>
-                <p class="card-text text-muted flex-grow-1">{{ product.description|truncatechars:100 }}</p>
-                <div class="d-flex justify-content-between align-items-center mt-3">
-                    <span class="fs-5 fw-bold text-success">{{ product.price }} ₽</span>
-                    <a href="{% url 'catalog:product_detail' product.pk %}" class="btn btn-outline-primary btn-sm">Подробнее</a>
+<div id="products-container">
+    <div class="row g-4">
+        {% for product in page_obj %}
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0" style="border-radius: 10px;">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}"
+                     style="height: 200px; object-fit: cover; border-top-left-radius: 10px; border-top-right-radius: 10px;">
+                {% endif %}
+                <div class="card-body d-flex flex-column">
+                    <span class="badge bg-secondary align-self-start mb-2">{{ product.category.name }}</span>
+                    <h5 class="card-title fw-bold">{{ product.name }}</h5>
+                    <p class="card-text text-muted flex-grow-1">{{ product.description|truncatechars:100 }}</p>
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <span class="fs-5 fw-bold text-success">{{ product.price }} ₽</span>
+                        <a href="{% url 'catalog:product_detail' product.pk %}" class="btn btn-outline-primary btn-sm">Подробнее</a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    {% empty %}
-    <p class="text-muted">Товаров пока нет.</p>
-    {% endfor %}
-</div>
-<!-- Навигация по страницам (пагинация) -->
-{% if page_obj.has_other_pages %}
-<nav aria-label="Навигация по товарам" class="mt-4">
-    <ul class="pagination justify-content-center">
-        {% if page_obj.has_previous %}
-        <li class="page-item">
-            <a class="page-link" href="?page={{ page_obj.previous_page_number }}#products">← Назад</a>
-        </li>
-        {% endif %}
-        {% for num in page_obj.paginator.page_range %}
-        <li class="page-item {% if page_obj.number == num %}active{% endif %}">
-            <a class="page-link" href="?page={{ num }}#products">{{ num }}</a>
-        </li>
+        {% empty %}
+        <p class="text-muted">Товаров пока нет.</p>
         {% endfor %}
-        {% if page_obj.has_next %}
-        <li class="page-item">
-            <a class="page-link" href="?page={{ page_obj.next_page_number }}#products">Вперёд →</a>
-        </li>
-        {% endif %}
-    </ul>
-</nav>
-{% endif %}
+    </div>
+    <!-- Навигация по страницам (пагинация) -->
+    {% if page_obj.has_other_pages %}
+    <nav aria-label="Навигация по товарам" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">← Назад</a>
+            </li>
+            {% endif %}
+            {% for num in page_obj.paginator.page_range %}
+            <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+            </li>
+            {% endfor %}
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Вперёд →</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
 {% endblock %}
 
 {% block extra_js %}
@@ -103,6 +107,25 @@
         document.querySelector(".emoji-hint").textContent = EMOJIS.HINT;
         document.querySelector(".emoji-toy").textContent = EMOJIS.TOY;
         document.querySelector(".emoji-robot").textContent = EMOJIS.AI_ROBOT;
+
+        const container = document.getElementById("products-container");
+        if (container) {
+            container.addEventListener("click", function(e) {
+                const link = e.target.closest(".page-link");
+                if (!link) return;
+                e.preventDefault();
+                fetch(link.href)
+                    .then(response => response.text())
+                    .then(html => {
+                        const doc = new DOMParser().parseFromString(html, "text/html");
+                        const newContent = doc.getElementById("products-container");
+                        if (newContent) {
+                            container.innerHTML = newContent.innerHTML;
+                            window.history.pushState({}, "", link.href);
+                        }
+                    });
+            });
+        }
     });
 </script>
 {% endblock %}
