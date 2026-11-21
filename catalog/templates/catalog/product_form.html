@@ -1,0 +1,15 @@
+{% extends 'catalog/base.html' %}
+
+{% block title %}Добавить товар — Магазин MY-RELAX{% endblock %}
+
+{% block content %}
+<a href="{% url 'catalog:home' %}" class="btn btn-outline-secondary mb-4">← Назад на главную</a>
+
+<h1 class="mb-4 fw-bold">Добавить новый товар</h1>
+
+<form method="POST" enctype="multipart/form-data" style="max-width: 550px;">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary fw-bold px-4 py-2 mt-2">Сохранить товар</button>
+</form>
+{% endblock %}
