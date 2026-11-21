@@ -4,9 +4,11 @@ from .models import Product, Contact
 
 
 def home(request):
+    products = Product.objects.all()
     latest_products = Product.objects.order_by('-created_at')[:5]
     print("Последние 5 товаров:", latest_products)
-    return render(request, 'catalog/home.html')
+    return render(request, 'catalog/home.html', {'products': products})
+
 
 
 def contacts(request):
