@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Магазин MY-RELAX{% endblock %}</title>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'css/ai_chat.css' %}" rel="stylesheet">
+</head>
+<body>
+<div class="container-fluid p-0">
+    <div class="d-flex">
+        <!-- Подшаблон главного меню -->
+        {% include 'catalog/includes/menu.html' %}
+
+        <!-- Уникальный контент каждой страницы -->
+        <div class="content-shifted p-5">
+            {% block content %}{% endblock %}
+
+            <div class="position-fixed bottom-0 end-0 m-4" style="z-index: 1060;">
+                <button class="btn btn-primary btn-lg shadow d-flex align-items-center gap-2">
+                    <span class="emoji-robot"></span> ИИ-Ассистент
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'js/emojis.js' %}"></script>
+<script src="{% static 'js/products.js' %}"></script>
+<script src="{% static 'js/menu.js' %}"></script>
+<script src="{% static 'js/store.js' %}"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const robot = document.querySelector(".emoji-robot");
+        if (robot) robot.textContent = EMOJIS.AI_ROBOT;
+    });
+</script>
+{% block extra_js %}{% endblock %}
+<script src="{% static 'js/ai_chat.js' %}"></script>
+</body>
+</html>

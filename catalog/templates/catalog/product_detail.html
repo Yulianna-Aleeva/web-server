@@ -1,41 +1,23 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ product.name }} — Магазин MY-RELAX</title>
-    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
-    <link href="{% static 'css/style.css' %}" rel="stylesheet">
-    <link href="{% static 'css/ai_chat.css' %}" rel="stylesheet">
-</head>
-<body>
-<div class="container-fluid p-0">
-    <div class="d-flex">
-        <div id="main-menu" class="bg-dark text-white p-4"></div>
+{% extends 'catalog/base.html' %}
 
-        <div class="content-shifted p-5">
-            <a href="{% url 'catalog:home' %}" class="btn btn-outline-secondary mb-4">← Назад на главную</a>
+{% block title %}{{ product.name }} — Магазин MY-RELAX{% endblock %}
 
-            <div class="card shadow-sm" style="max-width: 700px;">
-                {% if product.image %}
-                <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="max-height: 400px; object-fit: cover;">
-                {% endif %}
-                <div class="card-body p-4">
-                    <span class="badge bg-primary mb-2">{{ product.category.name }}</span>
-                    <h1 class="card-title fw-bold mb-3">{{ product.name }}</h1>
-                    <p class="card-text lead">{{ product.description }}</p>
-                    <hr>
-                    <div class="d-flex justify-content-between align-items-center mt-3">
-                        <span class="fs-3 fw-bold text-success">{{ product.price }} ₽</span>
-                        <small class="text-muted">Добавлено: {{ product.created_at|date:"d.m.Y" }}</small>
-                    </div>
-                </div>
-            </div>
+{% block content %}
+<a href="{% url 'catalog:home' %}" class="btn btn-outline-secondary mb-4">← Назад на главную</a>
+
+<div class="card shadow-sm" style="max-width: 700px;">
+    {% if product.image %}
+    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="max-height: 400px; object-fit: cover;">
+    {% endif %}
+    <div class="card-body p-4">
+        <span class="badge bg-primary mb-2">{{ product.category.name }}</span>
+        <h1 class="card-title fw-bold mb-3">{{ product.name }}</h1>
+        <p class="card-text lead">{{ product.description }}</p>
+        <hr>
+        <div class="d-flex justify-content-between align-items-center mt-3">
+            <span class="fs-3 fw-bold text-success">{{ product.price }} ₽</span>
+            <small class="text-muted">Добавлено: {{ product.created_at|date:"d.m.Y" }}</small>
         </div>
     </div>
 </div>
-<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-<script src="{% static 'js/emojis.js' %}"></script>
-<script src="{% static 'js/menu.js' %}"></script>
-</body>
-</html>
+{% endblock %}
