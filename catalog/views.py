@@ -1,8 +1,13 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from .models import Product, Contact
+
 
 def home(request):
+    latest_products = Product.objects.order_by('-created_at')[:5]
+    print("Последние 5 товаров:", latest_products)
     return render(request, 'catalog/home.html')
+
 
 def contacts(request):
     if request.method == 'POST':
@@ -35,4 +40,5 @@ def contacts(request):
 </body>
 </html>
         """)
-    return render(request, 'catalog/contacts.html')
+    contact = Contact.objects.first()
+    return render(request, 'catalog/contacts.html', {'contact': contact})

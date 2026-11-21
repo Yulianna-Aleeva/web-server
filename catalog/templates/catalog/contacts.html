@@ -16,6 +16,17 @@
             <h1 class="mb-3 fw-bold">Контакты</h1>
             <p class="lead text-muted mb-4">Свяжитесь с нами с помощью формы ниже.</p>
 
+            {% if contact %}
+            <div class="mb-4 p-3 bg-light rounded border">
+                <p class="mb-1"><strong>Имя:</strong> {{ contact.name }}</p>
+                <p class="mb-1"><strong>Возраст:</strong> {{ contact.age }}</p>
+                <p class="mb-1"><strong>Почта:</strong> {{ contact.email }}</p>
+                <p class="mb-1"><strong>Телефон:</strong> {{ contact.phone }}</p>
+                <p class="mb-0"><strong>Город:</strong> {{ contact.city }}</p>
+            </div>
+            {% endif %}
+
+
             <form action="/contacts/" method="POST" class="mt-4" style="max-width: 500px;">
                 {% csrf_token %}
                 <div class="mb-3">
