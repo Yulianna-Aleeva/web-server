@@ -46,7 +46,7 @@
 </div>
 <!-- Список товаров из базы данных -->
 <hr class="my-5">
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div id="products" class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="fw-bold mb-0">Наши товары для релакса:</h2>
     <a href="{% url 'catalog:product_create' %}" class="btn btn-success fw-bold">+ Добавить товар</a>
 </div>
@@ -78,17 +78,17 @@
     <ul class="pagination justify-content-center">
         {% if page_obj.has_previous %}
         <li class="page-item">
-            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">← Назад</a>
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}#products">← Назад</a>
         </li>
         {% endif %}
         {% for num in page_obj.paginator.page_range %}
         <li class="page-item {% if page_obj.number == num %}active{% endif %}">
-            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+            <a class="page-link" href="?page={{ num }}#products">{{ num }}</a>
         </li>
         {% endfor %}
         {% if page_obj.has_next %}
         <li class="page-item">
-            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Вперёд →</a>
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}#products">Вперёд →</a>
         </li>
         {% endif %}
     </ul>

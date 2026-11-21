@@ -6,7 +6,8 @@ from .models import Product, Contact
 
 
 def home(request):
-    products_list = Product.objects.all()
+    # products_list = Product.objects.all()
+    products_list = Product.objects.select_related('category').order_by('-created_at')
     paginator = Paginator(products_list, 3)  # по 3 товара на страницу
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
