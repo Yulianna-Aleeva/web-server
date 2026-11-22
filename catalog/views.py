@@ -7,7 +7,8 @@ from datetime import datetime
 from django.views.decorators.csrf import csrf_exempt
 from ai_logic import get_ai_response
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, CreateView, TemplateView
+from django.views.generic import ListView, DetailView, CreateView, TemplateView, View
+from django.utils.decorators import method_decorator
 
 
 class ProductListView(ListView):
@@ -52,25 +53,26 @@ class ContactsView(TemplateView):
 
 # --- ИИ-Ассистент ---
 
-def ai_init(request):
-    current_hour = datetime.now().hour
-    if 6 <= current_hour < 12:
-        greeting = "Доброе утро"
-    elif 12 <= current_hour < 18:
-        greeting = "Добрый день"
-    elif 18 <= current_hour < 23:
-        greeting = "Добрый вечер"
-    else:
-        greeting = "Доброй ночи"
-    return HttpResponse(
-        f"{greeting}! Я твой ИИ-помощник магазина MY-RELAX. Чем я могу помочь?",
-        content_type="text/plain; charset=utf-8"
-    )
+class AiInitView(View):
+    def get(self, request, *args, **kwargs):
+        current_hour = datetime.now().hour
+        if 6 <= current_hour < 12:
+            greeting = "Доброе утро"
+        elif 12 <= current_hour < 18:
+            greeting = "Добрый день"
+        elif 18 <= current_hour < 23:
+            greeting = "Добрый вечер"
+        else:
+            greeting = "Доброй ночи"
+        return HttpResponse(
+            f"{greeting}! Я твой ИИ-помощник магазина MY-RELAX. Чем я могу помочь?",
+            content_type="text/plain; charset=utf-8"
+        )
 
 
-@csrf_exempt
-def ai_chat(request):
-    if request.method == "POST":
+@method_decorator(csrf_exempt, name='dispatch')
+class AiChatView(View):
+    def post(self, request, *args, **kwargs):
         try:
             data = json.loads(request.body.decode("utf-8"))
             user_text = data.get("message", "").strip()
@@ -88,4 +90,3 @@ def ai_chat(request):
 
         reply = get_ai_response(user_text, history, context)
         return JsonResponse({"reply": reply})
-    return JsonResponse({"reply": "Метод не поддерживается."}, status=405)
