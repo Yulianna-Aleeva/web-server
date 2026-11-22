@@ -76,7 +76,7 @@ class MyServer(BaseHTTPRequestHandler):
             self.send_json({"reply": reply})
             return
 
-        if path == "/contacts":
+        if path == "/contacts/":
             post_data = self.rfile.read(content_length).decode("utf-8")
             decoded_data = unquote(post_data)
             print(f"Принятые данные: {decoded_data}")
@@ -150,9 +150,9 @@ class MyServer(BaseHTTPRequestHandler):
 
         pages = {
             "/": "index.html",
-            "/categories": "categories.html",
-            "/orders": "orders.html",
-            "/contacts": "contacts.html",
+            "/categories/": "categories.html",
+            "/orders/": "orders.html",
+            "/contacts/": "contacts.html",
         }
 
         if path in pages:

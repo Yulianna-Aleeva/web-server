@@ -19,11 +19,11 @@ document.addEventListener("DOMContentLoaded", function() {
         <h3 class="mb-4">Меню</h3>
         <ul class="nav flex-column gap-2">
             ${item("/", "Главная", currentPath === "/")}
-            ${item("/categories", "Категории", currentPath.startsWith("/categories"))}
-            ${item("/orders", "Заказы", currentPath.startsWith("/orders"),
+            ${item("/categories/", "Категории", currentPath.startsWith("/categories/"))}
+            ${item("/orders/", "Заказы", currentPath.startsWith("/orders/"),
                 `<span id="cart-badge" class="badge rounded-pill bg-warning text-dark d-none">0</span>`)}
-            ${item("/blogs/", "Блог", currentPath.startsWith("/blogs"))}
-            ${item("/contacts/", "Контакты", currentPath.startsWith("/contacts"))}
+            ${item("/blogs/", "Блог", currentPath.startsWith("/blogs/"))}
+            ${item("/contacts/", "Контакты", currentPath.startsWith("/contacts/"))}
         </ul>
 
         <div class="mt-auto pt-3 border-top border-secondary">
