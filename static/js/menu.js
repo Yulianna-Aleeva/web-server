@@ -22,7 +22,8 @@ document.addEventListener("DOMContentLoaded", function() {
             ${item("/categories", "Категории", currentPath.startsWith("/categories"))}
             ${item("/orders", "Заказы", currentPath.startsWith("/orders"),
                 `<span id="cart-badge" class="badge rounded-pill bg-warning text-dark d-none">0</span>`)}
-            ${item("/contacts", "Контакты", currentPath.startsWith("/contacts"))}
+            ${item("/blogs/", "Блог", currentPath.startsWith("/blogs"))}
+            ${item("/contacts/", "Контакты", currentPath.startsWith("/contacts"))}
         </ul>
 
         <div class="mt-auto pt-3 border-top border-secondary">

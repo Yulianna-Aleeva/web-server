@@ -1,0 +1,15 @@
+{% extends 'catalog/base.html' %}
+
+{% block title %}{% if object %}Редактировать статью{% else %}Новая статья{% endif %} — Блог{% endblock %}
+
+{% block content %}
+<a href="{% url 'blogs:blog_list' %}" class="btn btn-outline-secondary mb-4">← Назад в блог</a>
+
+<h1 class="fw-bold mb-4">{% if object %}Редактировать запись{% else %}Создать новую запись{% endif %}</h1>
+
+<form method="POST" enctype="multipart/form-data" style="max-width: 650px;">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary fw-bold px-4 py-2 mt-2">Сохранить</button>
+</form>
+{% endblock %}

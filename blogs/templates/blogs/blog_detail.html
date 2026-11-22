@@ -1,0 +1,29 @@
+{% extends 'catalog/base.html' %}
+
+{% block title %}{{ blog.title }} — Блог MY-RELAX{% endblock %}
+
+{% block content %}
+<a href="{% url 'blogs:blog_list' %}" class="btn btn-outline-secondary mb-4">← Назад к списку статей</a>
+
+<div class="card shadow-sm border-0" style="max-width: 800px; border-radius: 10px;">
+    {% if blog.preview %}
+    <img src="{{ blog.preview.url }}"
+         onerror="this.onerror=null; this.src='/media/{{ blog.preview.name }}';"
+         class="card-img-top"
+         alt="{{ blog.title }}"
+         style="max-height: 400px; object-fit: cover; border-top-left-radius: 10px; border-top-right-radius: 10px;">
+    {% endif %}
+    <div class="card-body p-4">
+        <div class="d-flex justify-content-between text-muted small mb-3">
+            <span>Опубликовано: {{ blog.created_at|date:"d.m.Y H:i" }}</span>
+            <span>Просмотров: {{ blog.views_count }}</span>
+        </div>
+        <h1 class="fw-bold mb-4">{{ blog.title }}</h1>
+        <div class="fs-5 lh-base mb-4">{{ blog.content|linebreaks }}</div>
+        <div class="d-flex gap-2 border-top pt-3">
+            <a href="{% url 'blogs:blog_update' blog.pk %}" class="btn btn-warning">Редактировать</a>
+            <a href="{% url 'blogs:blog_delete' blog.pk %}" class="btn btn-danger">Удалить</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
