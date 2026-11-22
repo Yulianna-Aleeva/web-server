@@ -1,8 +1,12 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.core.paginator import Paginator
 from .forms import ProductForm
 from .models import Product, Contact
+import json
+from datetime import datetime
+from django.views.decorators.csrf import csrf_exempt
+from ai_logic import get_ai_response
 
 
 def home(request):
@@ -65,3 +69,42 @@ def product_create(request):
     else:
         form = ProductForm()
     return render(request, 'catalog/product_form.html', {'form': form})
+
+
+def ai_init(request):
+    current_hour = datetime.now().hour
+    if 6 <= current_hour < 12:
+        greeting = "Доброе утро"
+    elif 12 <= current_hour < 18:
+        greeting = "Добрый день"
+    elif 18 <= current_hour < 23:
+        greeting = "Добрый вечер"
+    else:
+        greeting = "Доброй ночи"
+    return HttpResponse(
+        f"{greeting}! Я твой ИИ-помощник магазина MY-RELAX. Чем я могу помочь?",
+        content_type="text/plain; charset=utf-8"
+    )
+
+
+@csrf_exempt
+def ai_chat(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body.decode("utf-8"))
+            user_text = data.get("message", "").strip()
+            history = data.get("history", [])
+            context = data.get("context", {})
+            if not isinstance(history, list):
+                history = []
+            if not isinstance(context, dict):
+                context = {}
+        except (UnicodeDecodeError, json.JSONDecodeError):
+            return JsonResponse({"reply": "Некорректный формат запроса."}, status=400)
+
+        if not user_text:
+            return JsonResponse({"reply": "Введите сообщение."}, status=400)
+
+        reply = get_ai_response(user_text, history, context)
+        return JsonResponse({"reply": reply})
+    return JsonResponse({"reply": "Метод не поддерживается."}, status=405)
