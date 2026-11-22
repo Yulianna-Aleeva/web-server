@@ -1,80 +1,131 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Главная — Магазин</title>
-    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
-    <link href="{% static 'css/style.css' %}" rel="stylesheet">
-    <link href="{% static 'css/ai_chat.css' %}" rel="stylesheet">
-</head>
-<body>
-<div class="container-fluid p-0">
-    <div class="d-flex">
-        <div id="main-menu" class="bg-dark text-white p-4"></div>
-        <div class="content-shifted p-5">
-            <div class="text-center mb-5">
-                <h1 class="display-3 fw-normal mb-3">Добро пожаловать в магазин "MY-RELAX"!</h1>
-                <p class="lead text-muted fs-4">Здесь вы найдете игровые Печеньки, подсказки для любимых игр и реальные товары по их мотивам.</p>
-                <hr class="my-4">
-                <p class="text-secondary">← Воспользуйтесь боковым меню для перехода в нужный раздел.</p>
+{% extends 'catalog/base.html' %}
+
+{% block title %}Главная — Магазин{% endblock %}
+
+{% block content %}
+<div class="text-center mb-5">
+    <h1 class="display-3 fw-normal mb-3">Добро пожаловать в магазин "MY-RELAX"!</h1>
+    <p class="lead text-muted fs-4">Здесь вы найдете игровые Печеньки, подсказки для любимых игр и реальные товары по их
+        мотивам.</p>
+    <hr class="my-4">
+    <p class="text-secondary">← Воспользуйтесь боковым меню для перехода в нужный раздел.</p>
+</div>
+<div class="row g-4 mt-2">
+    <div class="col-md-4">
+        <a href="/categories#cookies"
+           class="card h-100 shadow-sm text-center p-4 text-decoration-none border border-2 border-warning custom-tile"
+           style="border-radius: 10px;">
+            <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                <span class="display-4 mb-2 emoji-cookie"></span>
+                <h5 class="card-title text-dark fw-bold">Печеньки</h5>
+                <small class="text-warning mt-2">Перейти →</small>
             </div>
-            <div class="row g-4 mt-2">
-                <div class="col-md-4">
-                    <a href="/categories#cookies"
-                       class="card h-100 shadow-sm text-center p-4 text-decoration-none border border-2 border-warning custom-tile"
-                       style="border-radius: 10px;">
-                        <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                            <span class="display-4 mb-2 emoji-cookie"></span>
-                            <h5 class="card-title text-dark fw-bold">Печеньки</h5>
-                            <small class="text-warning mt-2">Перейти →</small>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-md-4">
-                    <a href="/categories#hints"
-                       class="card h-100 shadow-sm text-center p-4 text-decoration-none border border-2 border-success custom-tile"
-                       style="border-radius: 10px;">
-                        <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                            <span class="display-4 mb-2 emoji-hint"></span>
-                            <h5 class="card-title text-dark fw-bold">Подсказки</h5>
-                            <small class="text-success mt-2">Перейти →</small>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-md-4">
-                    <a href="/categories#toys"
-                       class="card h-100 shadow-sm text-center p-4 text-decoration-none border border-2 border-primary custom-tile"
-                       style="border-radius: 10px;">
-                        <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                            <span class="display-4 mb-2 emoji-toy"></span>
-                            <h5 class="card-title text-dark fw-bold">Реплики игр</h5>
-                            <small class="text-primary mt-2">Перейти →</small>
-                        </div>
-                    </a>
-                </div>
+        </a>
+    </div>
+    <div class="col-md-4">
+        <a href="/categories#hints"
+           class="card h-100 shadow-sm text-center p-4 text-decoration-none border border-2 border-success custom-tile"
+           style="border-radius: 10px;">
+            <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                <span class="display-4 mb-2 emoji-hint"></span>
+                <h5 class="card-title text-dark fw-bold">Подсказки</h5>
+                <small class="text-success mt-2">Перейти →</small>
             </div>
-            <div class="position-fixed bottom-0 end-0 m-4" style="z-index: 1060;">
-                <button class="btn btn-primary btn-lg shadow d-flex align-items-center gap-2">
-                    <span class="emoji-robot"></span> ИИ-Ассистент
-                </button>
+        </a>
+    </div>
+    <div class="col-md-4">
+        <a href="/categories#toys"
+           class="card h-100 shadow-sm text-center p-4 text-decoration-none border border-2 border-primary custom-tile"
+           style="border-radius: 10px;">
+            <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                <span class="display-4 mb-2 emoji-toy"></span>
+                <h5 class="card-title text-dark fw-bold">Реплики игр</h5>
+                <small class="text-primary mt-2">Перейти →</small>
             </div>
-        </div>
+        </a>
     </div>
 </div>
-<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-<script src="{% static 'js/emojis.js' %}"></script>
-<script src="{% static 'js/products.js' %}"></script>
-<script src="{% static 'js/menu.js' %}"></script>
-<script src="{% static 'js/store.js' %}"></script>
+<!-- Список товаров из базы данных -->
+<hr class="my-5">
+<div id="products" class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold mb-0">Наши товары для релакса:</h2>
+    <a href="{% url 'catalog:product_create' %}" class="btn btn-success fw-bold">+ Добавить товар</a>
+</div>
+<div id="products-container">
+    <div class="row g-4">
+        {% for product in page_obj %}
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0" style="border-radius: 10px;">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}"
+                     style="height: 200px; object-fit: cover; border-top-left-radius: 10px; border-top-right-radius: 10px;">
+                {% endif %}
+                <div class="card-body d-flex flex-column">
+                    <span class="badge bg-secondary align-self-start mb-2">{{ product.category.name }}</span>
+                    <h5 class="card-title fw-bold">{{ product.name }}</h5>
+                    <p class="card-text text-muted flex-grow-1">{{ product.description|truncatechars:100 }}</p>
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <span class="fs-5 fw-bold text-success">{{ product.price }} ₽</span>
+                        <a href="{% url 'catalog:product_detail' product.pk %}" class="btn btn-outline-primary btn-sm">Подробнее</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-muted">Товаров пока нет.</p>
+        {% endfor %}
+    </div>
+    <!-- Навигация по страницам (пагинация) -->
+    {% if page_obj.has_other_pages %}
+    <nav aria-label="Навигация по товарам" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">← Назад</a>
+            </li>
+            {% endif %}
+            {% for num in page_obj.paginator.page_range %}
+            <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+            </li>
+            {% endfor %}
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Вперёд →</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         document.querySelector(".emoji-cookie").textContent = EMOJIS.COOKIE;
         document.querySelector(".emoji-hint").textContent = EMOJIS.HINT;
         document.querySelector(".emoji-toy").textContent = EMOJIS.TOY;
         document.querySelector(".emoji-robot").textContent = EMOJIS.AI_ROBOT;
+
+        const container = document.getElementById("products-container");
+        if (container) {
+            container.addEventListener("click", function(e) {
+                const link = e.target.closest(".page-link");
+                if (!link) return;
+                e.preventDefault();
+                fetch(link.href)
+                    .then(response => response.text())
+                    .then(html => {
+                        const doc = new DOMParser().parseFromString(html, "text/html");
+                        const newContent = doc.getElementById("products-container");
+                        if (newContent) {
+                            container.innerHTML = newContent.innerHTML;
+                            window.history.pushState({}, "", link.href);
+                        }
+                    });
+            });
+        }
     });
 </script>
-<script src="{% static 'js/ai_chat.js' %}"></script>
-</body>
-</html>
+{% endblock %}
