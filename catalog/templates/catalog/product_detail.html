@@ -6,9 +6,15 @@
 <a href="{% url 'catalog:home' %}" class="btn btn-outline-secondary mb-4">← Назад на главную</a>
 
 <div class="card shadow-sm" style="max-width: 700px;">
+
     {% if product.image %}
-    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="max-height: 400px; object-fit: cover;">
+    <img src="{{ product.image.url }}"
+         onerror="this.onerror=null; this.src='/media/{{ product.image.name }}';"
+         class="card-img-top"
+         alt="{{ product.name }}"
+         style="max-height: 400px; object-fit: cover;">
     {% endif %}
+
     <div class="card-body p-4">
         <span class="badge bg-primary mb-2">{{ product.category.name }}</span>
         <h1 class="card-title fw-bold mb-3">{{ product.name }}</h1>
