@@ -58,13 +58,14 @@
             <div class="card h-100 shadow-sm border-0" style="border-radius: 10px;">
 
                 {% if product.image %}
-                <img src="{{ product.image.url }}"
-                     onerror="this.onerror=null; this.src='/media/{{ product.image.name }}';"
-                     class="card-img-top"
-                     alt="{{ product.name }}"
-                     style="height: 200px; object-fit: cover; border-top-left-radius: 10px; border-top-right-radius: 10px;">
+                <div class="ratio ratio-4x3"
+                     style="overflow: hidden; border-top-left-radius: 10px; border-top-right-radius: 10px;">
+                    <img src="{{ product.image.url }}"
+                         onerror="this.onerror=null; this.src='/media/{{ product.image.name }}';"
+                         alt="{{ product.name }}"
+                         style="width: 100%; height: 100%; object-fit: cover; object-position: center;">
+                </div>
                 {% endif %}
-
                 <div class="card-body d-flex flex-column">
                     <span class="badge bg-secondary align-self-start mb-2">{{ product.category.name }}</span>
                     <h5 class="card-title fw-bold">{{ product.name }}</h5>

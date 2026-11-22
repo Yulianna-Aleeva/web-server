@@ -7,11 +7,13 @@
 
 <div class="card shadow-sm border-0" style="max-width: 800px; border-radius: 10px;">
     {% if blog.preview %}
-    <img src="{{ blog.preview.url }}"
-         onerror="this.onerror=null; this.src='/media/{{ blog.preview.name }}';"
-         class="card-img-top"
-         alt="{{ blog.title }}"
-         style="max-height: 400px; object-fit: cover; border-top-left-radius: 10px; border-top-right-radius: 10px;">
+    <div class="text-center bg-light p-3" style="border-top-left-radius: 10px; border-top-right-radius: 10px;">
+        <img src="{{ blog.preview.url }}"
+             onerror="this.onerror=null; this.src='/media/{{ blog.preview.name }}';"
+             class="img-fluid rounded"
+             alt="{{ blog.title }}"
+             style="max-height: 450px; width: auto; max-width: 100%;">
+    </div>
     {% endif %}
     <div class="card-body p-4">
         <div class="d-flex justify-content-between text-muted small mb-3">
