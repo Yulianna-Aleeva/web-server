@@ -60,11 +60,11 @@ def build_knowledge() -> str:
     emojis = load_emojis()
     lines = [
         "Магазин MY-RELAX.",
-        "Разделы сайта: / — главная, /categories — категории, /orders — заказы, /contacts — контакты.",
+        "Разделы сайта: / — главная, /categories/ — категории, /orders/ — заказы, /blogs/ — блог, /contacts/ — контакты.",
         "\nКаталог товаров:",
     ]
     for key, items in catalog.items():
-        title, url = CATEGORY_META.get(key, (key, "/categories"))
+        title, url = CATEGORY_META.get(key, (key, "/categories/"))
         lines.append(f"\n{title} — {url}")
         for item in items:
             name = item.get("name", "")
@@ -161,11 +161,12 @@ def get_ai_response(user_text: str, history: list[Any] | None = None, context: d
         "РАЗРЕШЕННЫЕ ССЫЛКИ:\n"
         "Ты можешь использовать ссылки ТОЛЬКО в формате Markdown "
         "и только для этих разделов:\n"
-        "- Купить валюту: [Печеньки](/categories#cookies)\n"
-        "- Купить подсказки: [Подсказки](/categories#hints)\n"
-        "- Купить реплики игр: [Реплики игр](/categories#toys)\n"
-        "- Посмотреть заказы: [Заказы](/orders)\n"
-        "- Обратиться в поддержку: [Контакты](/contacts)\n"
+        "- Купить валюту: [Печеньки](/categories/#cookies)\n"
+        "- Купить подсказки: [Подсказки](/categories/#hints)\n"
+        "- Купить реплики игр: [Реплики игр](/categories/#toys)\n"
+        "- Посмотреть заказы: [Заказы](/orders/)\n"
+        "- Почитать блоги пользователей: [Блог](/blogs/)\n"
+        "- Обратиться в поддержку: [Контакты](/contacts/)\n"
         "Любые другие ссылки, включая ссылки на главную страницу `(/)` "
         "или на слово «баланс», полностью ЗАПРЕЩЕНЫ.\n\n"
         "=== БАЗА ЗНАНИЙ ===\n"

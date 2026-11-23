@@ -56,7 +56,7 @@
       function renderCart() {
         const cart = Store.getCart();
         if (!cart.length) {
-          cartBox.innerHTML = `<p class="text-muted">Корзина пуста. <a href="/categories#toys">Перейти к репликам игр →</a></p>`;
+          cartBox.innerHTML = `<p class="text-muted">Корзина пуста. <a href="/categories/#toys">Перейти к репликам игр →</a></p>`;
           return;
         }
         const rows = cart.map(line => {

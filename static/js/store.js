@@ -184,7 +184,7 @@
 
         } else if (product.actionType === "add_to_game") {
             if (balance.cookies < product.price) {
-                toast(`Недостаточно печенек: нужно ${product.price} ${COOKIE}, у вас ${balance.cookies} ${COOKIE}. <a href="/categories#cookies" class="text-reset fw-bold">Купить печеньки</a>`, "warning");
+                toast(`Недостаточно печенек: нужно ${product.price} ${COOKIE}, у вас ${balance.cookies} ${COOKIE}. <a href="/categories/#cookies" class="text-reset fw-bold">Купить печеньки</a>`, "warning");
                 return;
             }
             if (!await confirmDialog(`Добавить в игру <b>${product.name}</b> за <b>${product.price} ${COOKIE}</b>?`, "Добавить")) return;
@@ -196,7 +196,7 @@
 
         } else if (product.actionType === "to_cart") {
             addToCart(product.id);
-            toast(`«${product.name}» добавлен в корзину. <a href="/orders" class="text-reset fw-bold">Перейти в корзину</a>`);
+            toast(`«${product.name}» добавлен в корзину. <a href="/orders/" class="text-reset fw-bold">Перейти в корзину</a>`);
         }
     }
 

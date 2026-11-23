@@ -128,7 +128,7 @@ document.addEventListener("DOMContentLoaded", function () {
     /* Запросы к серверу */
     async function loadGreeting() {
         try {
-            const response = await fetch("/api/ai-init");
+            const response = await fetch("/api/ai-init/");
             const data = await response.text();
             appendMessage(data, "assistant");
         } catch (err) {
@@ -160,7 +160,7 @@ document.addEventListener("DOMContentLoaded", function () {
         scrollToBottom();
 
         try {
-            const response = await fetch("/api/ai-chat", {
+            const response = await fetch("/api/ai-chat/", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({

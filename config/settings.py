@@ -23,7 +23,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'catalog',
-    'storages',
+    'blogs',
+    # === ОБЛАЧНОЕ ХРАНИЛИЩЕ SUPABASE STORAGE ===
+    # 'storages',
 ]
 
 MIDDLEWARE = [
@@ -82,9 +84,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru-ru'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Yekaterinburg'
 
 USE_I18N = True
 
@@ -95,28 +97,43 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# === ЛОКАЛЬНОЕ ХРАНИЛИЩЕ МЕДИАФАЙЛОВ (активно сейчас) ===
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# Картинки на Supabase.Storages:
-USE_CLOUD_STORAGE = os.getenv('USE_CLOUD_STORAGE', 'True') == 'True'
+# === ОБЛАЧНОЕ ХРАНИЛИЩЕ SUPABASE STORAGE ===
+# USE_CLOUD_STORAGE = os.getenv('USE_CLOUD_STORAGE', 'True') == 'True'
+#
+# if USE_CLOUD_STORAGE:
+#     STORAGES = {
+#         "default": {
+#             "BACKEND": "storages.backends.s3.S3Storage",
+#             "OPTIONS": {
+#                 "access_key": os.getenv("SUPABASE_S3_ACCESS_KEY_ID"),
+#                 "secret_key": os.getenv("SUPABASE_S3_SECRET_ACCESS_KEY"),
+#                 "bucket_name": os.getenv("SUPABASE_BUCKET_NAME"),
+#                 "endpoint_url": os.getenv("SUPABASE_S3_ENDPOINT_URL"),
+#                 "region_name": "eu-west-1",
+#                 "querystring_auth": False,
+#                 "addressing_style": "path",
+#                 "custom_domain": "qdwbkbukaxfgboniokmo.supabase.co/storage/v1/object/public/products",
+#             },
+#         },
+#         "staticfiles": {
+#             "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+#         },
+#     }
 
-if USE_CLOUD_STORAGE:
-    STORAGES = {
-        "default": {
-            "BACKEND": "storages.backends.s3.S3Storage",
-            "OPTIONS": {
-                "access_key": os.getenv("SUPABASE_S3_ACCESS_KEY_ID"),
-                "secret_key": os.getenv("SUPABASE_S3_SECRET_ACCESS_KEY"),
-                "bucket_name": os.getenv("SUPABASE_BUCKET_NAME"),
-                "endpoint_url": os.getenv("SUPABASE_S3_ENDPOINT_URL"),
-                "region_name": "eu-west-1",
-                "default_acl": "public-read",
-                "querystring_auth": False,
-                "custom_domain": "qdwbkbukaxfgboniokmo.supabase.co/storage/v1/object/public/products",
-            },
-        },
-        "staticfiles": {
-            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
-        },
-    }
+
+# === НАСТРОЙКИ ОТПРАВКИ ПОЧТЫ (вывод писем в консоль - АКТИВНО) ===
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'noreply@my-relax.ru'
+
+# === РЕАЛЬНАЯ ПОЧТА ===
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.yandex.ru')
+# EMAIL_PORT = int(os.getenv('EMAIL_PORT', 465))
+# EMAIL_USE_SSL = True
+# EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+# EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+# DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
