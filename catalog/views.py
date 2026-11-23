@@ -6,8 +6,8 @@ import json
 from datetime import datetime
 from django.views.decorators.csrf import csrf_exempt
 from ai_logic import get_ai_response
-from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, CreateView, TemplateView, View
+from django.urls import reverse_lazy, reverse
+from django.views.generic import ListView, DetailView, CreateView, TemplateView, View, UpdateView, DeleteView
 from django.utils.decorators import method_decorator
 
 
@@ -30,6 +30,21 @@ class ProductCreateView(CreateView):
     model = Product
     form_class = ProductForm
     template_name = 'catalog/product_form.html'
+    success_url = reverse_lazy('catalog:home')
+
+
+class ProductUpdateView(UpdateView):
+    model = Product
+    form_class = ProductForm
+    template_name = 'catalog/product_form.html'
+
+    def get_success_url(self):
+        return reverse('catalog:product_detail', args=[self.object.pk])
+
+
+class ProductDeleteView(DeleteView):
+    model = Product
+    template_name = 'catalog/product_confirm_delete.html'
     success_url = reverse_lazy('catalog:home')
 
 
