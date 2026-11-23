@@ -1,9 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const allButtons = document.querySelectorAll("button");
-    const assistantBtn = Array.from(allButtons).find(btn =>
-        btn.textContent.includes("ИИ-Ассистент") ||
-        btn.querySelector(".emoji-robot")
-    );
+    const assistantBtn = Array.from(document.querySelectorAll("button")).find(btn => btn.textContent.includes("ИИ-Ассистент"));
     if (!assistantBtn) return;
 
     const STORAGE_KEY = "my_relax_chat_history";
@@ -14,12 +10,12 @@ document.addEventListener("DOMContentLoaded", function () {
     chatContainer.innerHTML = `
         <div class="chat-header d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center gap-2">
-                <span class="emoji-robot"></span>
+                <span class="emoji-robot">🤖</span>
                 <span class="fw-bold">ИИ-Ассистент</span>
             </div>
             <div class="d-flex gap-2 align-items-center">
                 <button type="button" id="clear-chat" title="Очистить чат" style="background:none;border:none;color:white;cursor:pointer;font-size:16px;padding:0;">
-                    <span class="emoji-trash"></span>
+                    <span class="emoji-trash">🗑️</span>
                 </button>
                 <button type="button" id="close-chat" aria-label="Закрыть">×</button>
             </div>
@@ -37,12 +33,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     document.body.appendChild(chatContainer);
 
-    const headerRobotEmoji = chatContainer.querySelector(".emoji-robot");
-    if (headerRobotEmoji && typeof EMOJIS !== "undefined") headerRobotEmoji.textContent = EMOJIS.AI_ROBOT;
-
-    const headerTrashEmoji = chatContainer.querySelector(".emoji-trash");
-    if (headerTrashEmoji && typeof EMOJIS !== "undefined") headerTrashEmoji.textContent = EMOJIS.TRASH;
-
     const messagesBody = document.getElementById("chat-messages");
     const chatInput = document.getElementById("chat-input");
     const sendBtn = document.getElementById("send-msg-btn");
@@ -53,42 +43,25 @@ document.addEventListener("DOMContentLoaded", function () {
     let isSending = false;
     let chatHistory = [];
 
-    /* Скролл чата вниз */
-    function scrollToBottom() {
-        setTimeout(() => {
-            messagesBody.scrollTop = messagesBody.scrollHeight;
-        }, 50);
-    }
+    // Скролл чата вниз
+    const scrollToBottom = () => setTimeout(() => { messagesBody.scrollTop = messagesBody.scrollHeight; }, 50);
 
-    /* Обработка спецсимволов */
-    function escapeHtml(s) {
-        return s.replace(/&/g, "&amp;").replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-    }
+    // Обработка спецсимволов
+    const escapeHtml = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
-    /* Поиск Markdown ссылок */
+    // Поиск Markdown ссылок и жирного текста
     function linkify(text) {
-        const safeText = escapeHtml(text);
-        return safeText.replace(
-            /\[([^\]]+)\]\(([^)]+)\)/g,
-            (match, linkText, url) => {
-                const safeUrl = url.replace(/[^a-zA-Z0-9/:-]/g, "");
-                return `<a href="${safeUrl}" class="chat-link">${linkText}</a>`;
-            }
-        );
+        return escapeHtml(text)
+            .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+            .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, linkText, url) => `<a href="${url.replace(/[^a-zA-Z0-9/#?=:-]/g, "")}" class="chat-link">${linkText}</a>`);
     }
 
-    /* Добавление сообщений */
+    // Добавление сообщений
     function appendMessage(text, type, shouldSave = true) {
         const msgDiv = document.createElement("div");
-        const role = type === "robot" || type === "assistant" ? "assistant" : "user";
+        const role = (type === "robot" || type === "assistant") ? "assistant" : "user";
         msgDiv.className = `msg ${role === "assistant" ? "msg-robot me-auto" : "msg-user ms-auto"}`;
-
-        if (role === "assistant") {
-            msgDiv.innerHTML = linkify(text);
-        } else {
-            msgDiv.textContent = text;
-        }
+        role === "assistant" ? (msgDiv.innerHTML = linkify(text)) : (msgDiv.textContent = text);
 
         messagesBody.appendChild(msgDiv);
         scrollToBottom();
@@ -99,13 +72,10 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    /* Сохранение в LocalStorage */
+    // Сохранение в LocalStorage
     function saveToLocalStorage() {
-        try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(chatHistory));
-        } catch (e) {
-            console.error("Ошибка сохранения в LocalStorage:", e);
-        }
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(chatHistory)); }
+        catch (e) { console.error("Ошибка сохранения в LocalStorage:", e); }
     }
 
     // Загрузка истории из памяти
@@ -114,26 +84,20 @@ document.addEventListener("DOMContentLoaded", function () {
             const savedData = localStorage.getItem(STORAGE_KEY);
             if (savedData) {
                 chatHistory = JSON.parse(savedData);
-                chatHistory.forEach(item => {
-                    appendMessage(item.content, item.role, false);
-                });
+                chatHistory.forEach(item => appendMessage(item.content, item.role, false));
                 isInitialized = true;
                 scrollToBottom();
             }
-        } catch (e) {
-            console.error("Ошибка загрузки истории из LocalStorage:", e);
-        }
+        } catch (e) { console.error("Ошибка загрузки истории из LocalStorage:", e); }
     }
 
-    /* Запросы к серверу */
+    // Запросы к серверу
     async function loadGreeting() {
         try {
             const response = await fetch("/api/ai-init/");
-            const data = await response.text();
-            appendMessage(data, "assistant");
-        } catch (err) {
-            const fallback = "Привет! Я твой ИИ-помощник магазина MY-RELAX. Чем могу помочь?";
-            appendMessage(fallback, "assistant");
+            appendMessage(await response.text(), "assistant");
+        } catch {
+            appendMessage("Привет! Я твой ИИ-помощник магазина MY-RELAX. Помогу выбрать товары для отдыха!", "assistant");
         } finally {
             isInitialized = true;
         }
@@ -142,16 +106,12 @@ document.addEventListener("DOMContentLoaded", function () {
     // Отправка сообщений на бэкенд
     async function handleSendMessage() {
         if (isSending) return;
-
         const text = chatInput.value.trim();
         if (!text) return;
 
         appendMessage(text, "user");
         chatInput.value = "";
-
-        isSending = true;
-        chatInput.disabled = true;
-        sendBtn.disabled = true;
+        isSending = chatInput.disabled = sendBtn.disabled = true;
 
         const statusDiv = document.createElement("div");
         statusDiv.className = "msg msg-robot me-auto";
@@ -163,30 +123,23 @@ document.addEventListener("DOMContentLoaded", function () {
             const response = await fetch("/api/ai-chat/", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    message: text,
-                    history: chatHistory.slice(-10),
-                    context: typeof Store !== "undefined" ? Store.getContext() : {}
-                })
+                body: JSON.stringify({ message: text, history: chatHistory.slice(-10) })
             });
-
             const data = await response.json();
             if (!response.ok) throw new Error(data.reply || "Ошибка");
 
             statusDiv.remove();
             appendMessage(data.reply, "assistant");
-        } catch (err) {
+        } catch {
             statusDiv.remove();
             appendMessage("Не удалось получить ответ от ИИ.", "assistant");
         } finally {
-            isSending = false;
-            chatInput.disabled = false;
-            sendBtn.disabled = false;
+            isSending = chatInput.disabled = sendBtn.disabled = false;
             chatInput.focus();
         }
     }
 
-    /* Инициализация чата */
+    // Инициализация чата
     loadLocalStorageHistory();
 
     if (localStorage.getItem("ai_chat_open") === "true") {
@@ -195,26 +148,24 @@ document.addEventListener("DOMContentLoaded", function () {
         chatInput.focus();
     }
 
-    /* Кнопки и клики */
-    assistantBtn.addEventListener("click", function () {
-        chatContainer.classList.toggle("d-none");
-        if (!chatContainer.classList.contains("d-none")) {
-            localStorage.setItem("ai_chat_open", "true");
+    // Кнопки и клики
+    assistantBtn.addEventListener("click", () => {
+        const isOpen = !chatContainer.classList.toggle("d-none");
+        localStorage.setItem("ai_chat_open", isOpen);
+        if (isOpen) {
             scrollToBottom();
             chatInput.focus();
             if (!isInitialized) loadGreeting();
-        } else {
-            localStorage.setItem("ai_chat_open", "false");
         }
     });
 
-    closeBtn.addEventListener("click", function () {
+    closeBtn.addEventListener("click", () => {
         chatContainer.classList.add("d-none");
         localStorage.setItem("ai_chat_open", "false");
     });
 
     if (clearBtn) {
-        clearBtn.addEventListener("click", function () {
+        clearBtn.addEventListener("click", () => {
             if (confirm("Очистить историю чата?")) {
                 localStorage.removeItem(STORAGE_KEY);
                 chatHistory = [];
@@ -226,7 +177,5 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     sendBtn.addEventListener("click", handleSendMessage);
-    chatInput.addEventListener("keypress", function (e) {
-        if (e.key === "Enter") handleSendMessage();
-    });
+    chatInput.addEventListener("keypress", e => { if (e.key === "Enter") handleSendMessage(); });
 });

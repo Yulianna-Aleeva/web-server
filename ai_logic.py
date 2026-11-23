@@ -1,130 +1,44 @@
-import json
 import os
-import re
 import uuid
-from typing import Any
-
 import requests
 import urllib3
+from typing import Any
+from catalog.models import Category
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
-CATEGORY_META = {
-    "cookies": (
-        "Печеньки (игровая валюта), покупается за рубли",
-        "Можно найти на Главной странице или в разделе Категории → Печеньки",
-    ),
-    "hints": (
-        "Подсказки для игр, покупаются за печеньки",
-        "Можно найти на Главной странице или в разделе Категории → Подсказки",
-    ),
-    "toys": (
-        "Реплики игр (реальные товары), покупаются за рубли",
-        "Можно найти на Главной странице или в разделе Категории → Реплики игр",
-    ),
-}
 
 TOKEN_URL = "https://ngw.devices.sberbank.ru:9443/api/v2/oauth"
 CHAT_URL = "https://gigachat.devices.sberbank.ru/api/v1/chat/completions"
 
 
-def _parse_js_object(text: str, const_name: str) -> dict:
-    match = re.search(rf"const {const_name}\s*=\s*(\{{.*?\}});", text, re.S)
-    if not match:
-        return {}
-    js_object = match.group(1)
-    js_object = re.sub(r"([{\s,])([A-Za-z_][A-Za-z0-9_]*)\s*:", r'\1"\2":', js_object)
-    js_object = js_object.replace("'", '"')
-    js_object = re.sub(r",\s*([\]}])", r"\1", js_object)
-    return dict(json.loads(js_object))
-
-
-def load_catalog() -> dict:
-    path = os.path.join("static", "js", "products.js")
-    if not os.path.exists(path):
-        return {}
-    with open(path, "r", encoding="utf-8") as file:
-        return _parse_js_object(file.read(), "CATALOG_DATA")
-
-
-def load_emojis() -> dict:
-    path = os.path.join("static", "js", "emojis.js")
-    if not os.path.exists(path):
-        return {}
-    with open(path, "r", encoding="utf-8") as file:
-        return _parse_js_object(file.read(), "EMOJIS")
-
-
 def build_knowledge() -> str:
-    catalog = load_catalog()
-    emojis = load_emojis()
     lines = [
-        "Магазин MY-RELAX.",
-        "Разделы сайта: / — главная, /categories/ — категории, /orders/ — заказы, /blogs/ — блог, /contacts/ — контакты.",
-        "\nКаталог товаров:",
-    ]
-    for key, items in catalog.items():
-        title, url = CATEGORY_META.get(key, (key, "/categories/"))
-        lines.append(f"\n{title} — {url}")
-        for item in items:
-            name = item.get("name", "")
-            desc = item.get("desc")
-            price = item.get("price", "")
-            currency_key = item.get("currency", "")
-            currency = emojis.get(currency_key, currency_key)
-            if desc:
-                lines.append(f"- {name}: {desc}. Цена: {price} {currency}")
-            else:
-                lines.append(f"- {name}: цена {price} {currency}")
-    return "\n".join(lines)
-
-
-def build_user_context(context: dict[Any, Any] | None = None) -> str:
-    context = context if isinstance(context, dict) else {}
-    emojis = load_emojis()
-    rub, cookie = emojis.get("RUBLE", "RUBLE"), emojis.get("COOKIE", "COOKIE")
-
-    def s(value, limit=60):
-        return str(value)[:limit]
-
-    def items(key, limit):
-        value = context.get(key)
-        return [x for x in value[:limit] if isinstance(x, dict)] if isinstance(value, list) else []
-
-    balance = context.get("balance")
-    balance = balance if isinstance(balance, dict) else {}
-
-    lines = [
-        "\nКонтекст сессии:",
-        f"Баланс: {s(balance.get('rubles', 0))} {rub} и {s(balance.get('cookies', 0))} {cookie}.",
-        "Как покупать: Печеньки — кнопка «Купить» (списываются рубли); Подсказки — кнопка «Добавить» "
-        "(списываются печеньки, подсказка попадает в игру); Реплики игр — «В корзину», затем «Оформить заказ» "
-        "на странице Заказы (списываются рубли). "
-        "Пополнить рубли — плитки +100 / +500 / +1000 в блоке «Пополнить» внизу меню слева.",
+        "Магазин товаров для релакса и отдыха MY-RELAX.",
+        "Разделы сайта: / — главная, /catalog/ — каталог с фильтрацией по категориям и поиском, "
+        "/blogs/ — блог с полезными статьями, /contacts/ — контакты и обратная связь.",
+        "\nКатегории и актуальные товары из каталога:",
     ]
 
-    cart = items("cart", 20)
-    if cart:
-        lines.append(f"Корзина (итого {s(context.get('cart_total', 0))} {rub}):")
-        lines += [f"- {s(c.get('name'))} × {s(c.get('qty'))} = {s(c.get('sum'))} {rub}" for c in cart]
-    else:
-        lines.append("Корзина пуста.")
+    categories = Category.objects.prefetch_related("product_set").all()
+    if not categories.exists():
+        lines.append("Категории пока не заполнены.")
+        return "\n".join(lines)
 
-    orders = items("orders", 10)
-    if orders:
-        lines.append("Последние заказы (новые сверху):")
-        for o in orders:
-            currency = emojis.get(s(o.get("currency", "")), s(o.get("currency", "")))
+    for category in categories:
+        lines.append(
+            f"\nКатегория «{category.name}» (/catalog/?category={category.pk}): "
+            f"{category.description or 'товары для отдыха и релакса'}"
+        )
+        products = category.product_set.all()
+
+        if not products:
+            lines.append("- В этой категории пока нет товаров.")
+        for product in products:
+            status = "в наличии" if getattr(product, "is_available", True) else "нет в наличии"
             lines.append(
-                f"- #{s(o.get('number'))}: {s(o.get('name'))} ({s(o.get('category'))}) — "
-                f"{s(o.get('price'))} {currency}, {s(o.get('status'))}"
+                f"- {product.name} (/products/{product.pk}/): {product.description} "
+                f"Цена: {product.price} ₽ ({status})."
             )
-    else:
-        lines.append("Заказов пока нет.")
-
-    inventory = items("inventory", 20)
-    if inventory:
-        lines.append("Подсказки в игре: " + ", ".join(f"{s(i.get('name'))} × {s(i.get('qty'))}" for i in inventory))
 
     return "\n".join(lines)
 
@@ -144,34 +58,21 @@ def get_ai_response(user_text: str, history: list[Any] | None = None, context: d
         return "Данные доступа GigaChat не настроены."
 
     system_prompt = (
-        "Ты — ИИ-консультант интернет-магазина для игрового сайта "
-        "MY-RELAX.\n"
-        "Отвечай строго на основе предоставленной базы знаний, "
-        "кратко и лаконично (1-2 предложения).\n"
-        "НИКОГДА не выдумывай информацию от себя.\n\n"
-        "ЖЁСТКИЕ ШАБЛОНЫ ОТВЕТОВ (ОТВЕЧАЙ СТРОГО ТАК):\n"
-        "1. Если пользователь спрашивает «где баланс», «где мой баланс», "
-        "«сколько у меня печенек» или задает любой вопрос про "
-        "местонахождение баланса рублей или печенек — ты обязан "
-        "ответить строго этой фразой и ни словом больше:\n"
-        "«Твой баланс рублей и печенек указан в левом меню сайта "
-        "(в самом низу).»\n"
-        "Запрещено делать слова из этой фразы ссылками. "
-        "Не используй Markdown.\n\n"
+        "Ты — дружелюбный ИИ-консультант интернет-магазина товаров для релакса и отдыха MY-RELAX.\n"
+        "Помогай покупателям подобрать эфирные масла, свечи, благовония, морскую соль, бомбочки для ванны, "
+        "массажёры, травяные чаи и маски для сна.\n"
+        "Отвечай строго на основе предоставленной базы знаний, кратко и лаконично (1–3 предложения).\n"
+        "НИКОГДА не выдумывай товары или цены от себя.\n\n"
         "РАЗРЕШЕННЫЕ ССЫЛКИ:\n"
-        "Ты можешь использовать ссылки ТОЛЬКО в формате Markdown "
-        "и только для этих разделов:\n"
-        "- Купить валюту: [Печеньки](/categories/#cookies)\n"
-        "- Купить подсказки: [Подсказки](/categories/#hints)\n"
-        "- Купить реплики игр: [Реплики игр](/categories/#toys)\n"
-        "- Посмотреть заказы: [Заказы](/orders/)\n"
-        "- Почитать блоги пользователей: [Блог](/blogs/)\n"
+        "Ты можешь использовать ссылки ТОЛЬКО в формате Markdown и только для этих разделов или конкретных товаров:\n"
+        "- Весь каталог товаров: [Каталог](/catalog/)\n"
+        "- Конкретная категория (подставь ID из базы): [Название категории](/catalog/?category=ID)\n"
+        "- Карточка конкретного товара (подставь ID из базы): [Название товара](/products/ID/)\n"
+        "- Почитать статьи о релаксе: [Блог](/blogs/)\n"
         "- Обратиться в поддержку: [Контакты](/contacts/)\n"
-        "Любые другие ссылки, включая ссылки на главную страницу `(/)` "
-        "или на слово «баланс», полностью ЗАПРЕЩЕНЫ.\n\n"
+        "Любые другие ссылки, включая ссылки на главную страницу `(/)`, ЗАПРЕЩЕНЫ.\n\n"
         "=== БАЗА ЗНАНИЙ ===\n"
-        f"{build_knowledge()}\n"
-        f"{build_user_context(context)}"
+        f"{build_knowledge()}"
     )
 
     messages = [{"role": "system", "content": system_prompt}]
@@ -206,7 +107,7 @@ def get_ai_response(user_text: str, history: list[Any] | None = None, context: d
             json={
                 "model": "GigaChat",
                 "messages": messages,
-                "temperature": 0.1,
+                "temperature": 0.2,
                 "max_tokens": 300,
             },
             verify=False,

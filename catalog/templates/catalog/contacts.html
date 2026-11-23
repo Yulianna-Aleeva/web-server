@@ -1,44 +1,41 @@
 {% extends 'catalog/base.html' %}
 
-{% block title %}Контакты — Магазин{% endblock %}
+{% block title %}Контакты — Магазин MY-RELAX{% endblock %}
 
 {% block content %}
-<h1 class="mb-3 fw-bold">Контакты</h1>
-<p class="lead text-muted mb-4">Свяжитесь с нами с помощью формы ниже.</p>
-{% if contact %}
-<div class="mb-4 p-3 bg-light rounded border">
-    <p class="mb-1"><strong>Имя:</strong> {{ contact.name }}</p>
-    <p class="mb-1"><strong>Возраст:</strong> {{ contact.age }}</p>
-    <p class="mb-1"><strong>Почта:</strong> {{ contact.email }}</p>
-    <p class="mb-1"><strong>Телефон:</strong> {{ contact.phone }}</p>
-    <p class="mb-0"><strong>Город:</strong> {{ contact.city }}</p>
+<div class="mx-auto" style="max-width: 650px;">
+    <h1 class="fw-bold mb-2">💌 Контакты</h1>
+    <p class="text-muted mb-4">Есть вопрос по подбору товаров для релакса или заказу? Напишите нам через форму ниже.</p>
+
+    {% if success %}
+    <div class="alert alert-success" role="alert">
+        Спасибо! Ваше сообщение сохранено и отправлено команде магазина MY-RELAX.
+    </div>
+    {% endif %}
+
+    {% if error %}
+    <div class="alert alert-danger" role="alert">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <div class="card shadow-sm border-0 p-4" style="border-radius: 12px;">
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Имя</label>
+                <input type="text" name="name" class="form-control" placeholder="Ваше имя" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Email</label>
+                <input type="email" name="email" class="form-control" placeholder="example@mail.ru" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Сообщение</label>
+                <textarea name="message" rows="4" class="form-control" placeholder="Текст вашего сообщения" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary fw-bold px-4">Отправить</button>
+        </form>
+    </div>
 </div>
-{% endif %}
-{% if success %}
-<div class="alert alert-success" role="alert" style="max-width: 500px;">
-    Сообщение отправлено. Перенаправление на главную страницу.
-</div>
-<script>
-    setTimeout(function() {
-        window.location.href = "{% url 'catalog:home' %}";
-    }, 3000);
-</script>
-{% endif %}
-<form action="{% url 'catalog:contacts' %}" method="POST" class="mt-4" style="max-width: 500px;">
-    {% csrf_token %}
-    <div class="mb-3">
-        <label for="name" class="form-label fw-bold">Имя</label>
-        <input type="text" name="name" id="name" class="form-control" placeholder="Ваше имя" required>
-    </div>
-    <div class="mb-3">
-        <label for="email" class="form-label fw-bold">Email</label>
-        <input type="email" name="email" id="email" class="form-control" placeholder="example@mail.com" required>
-    </div>
-    <div class="mb-3">
-        <label for="message" class="form-label fw-bold">Сообщение</label>
-        <textarea name="message" id="message" rows="4" class="form-control" placeholder="Текст вашего сообщения"
-                  required></textarea>
-    </div>
-    <button type="submit" class="btn btn-primary fw-bold px-4 py-2 mt-2">Отправить</button>
-</form>
 {% endblock %}
