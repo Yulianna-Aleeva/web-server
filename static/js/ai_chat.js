@@ -50,11 +50,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const escapeHtml = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
     // Поиск Markdown ссылок и жирного текста
-    function linkify(text) {
-        return escapeHtml(text)
-            .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-            .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, linkText, url) => `<a href="${url.replace(/[^a-zA-Z0-9/#?=:-]/g, "")}" class="chat-link">${linkText}</a>`);
-    }
+function linkify(text) {
+    return escapeHtml(text)
+        .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, linkText, url) => `<a href="${url.replace(/[^a-zA-Z0-9/#?=:-]/g, "")}" class="chat-link">${linkText}</a>`)
+        .replace(/\[(\/[a-zA-Z0-9/#?=:-]+)\]/g, (_, url) => `<a href="${url}" class="chat-link">Перейти к товару</a>`);
+}
 
     // Добавление сообщений
     function appendMessage(text, type, shouldSave = true) {

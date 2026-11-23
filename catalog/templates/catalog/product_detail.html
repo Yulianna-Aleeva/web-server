@@ -6,31 +6,42 @@
 <a href="{% url 'catalog:home' %}" class="btn btn-outline-secondary mb-4">← Назад на главную</a>
 <div class="card shadow-sm" style="max-width: 700px;">
     {% if product.image %}
-    <div class="text-center bg-light p-3" style="border-top-left-radius: 10px; border-top-right-radius: 10px;">
+    <div class="mb-0">
         <img src="{{ product.image.url }}"
              onerror="this.onerror=null; this.src='/media/{{ product.image.name }}';"
-             class="img-fluid rounded"
              alt="{{ product.name }}"
-             style="max-height: 420px; width: auto; max-width: 100%;">
+             class="img-fluid rounded w-100"
+             style="max-height: 450px; object-fit: cover;">
     </div>
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <a href="{% url 'catalog:home' %}" class="btn btn-outline-secondary btn-sm">← Назад в каталог</a>
-        <div class="d-flex gap-2">
-            <a href="{% url 'catalog:product_update' product.pk %}"
-               class="btn btn-outline-primary btn-sm">Редактировать</a>
-            <a href="{% url 'catalog:product_delete' product.pk %}" class="btn btn-outline-danger btn-sm">Удалить</a>
-        </div>
-    </div>
-
     {% endif %}
+
+    <!-- Единая панель кнопок под фото (и для товаров без фото) -->
     <div class="card-body p-4">
-        <span class="badge bg-primary mb-2">{{ product.category.name }}</span>
-        <h1 class="card-title fw-bold mb-3">{{ product.name }}</h1>
-        <p class="card-text lead">{{ product.description }}</p>
-        <hr>
-        <div class="d-flex justify-content-between align-items-center mt-3">
-            <span class="fs-3 fw-bold text-success">{{ product.price }} ₽</span>
-            <small class="text-muted">Добавлено: {{ product.created_at|date:"d.m.Y" }}</small>
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2 pb-2 border-bottom">
+            <a href="{% url 'catalog:catalog_list' %}" class="btn btn-outline-secondary btn-sm">← Назад в каталог</a>
+            <div class="d-flex gap-2">
+                <a href="{% url 'catalog:product_update' product.pk %}" class="btn btn-outline-dark btn-sm">Редактировать</a>
+                <a href="{% url 'catalog:product_delete' product.pk %}"
+                   class="btn btn-outline-danger btn-sm">Удалить</a>
+            </div>
+        </div>
+
+        <div class="mb-1">
+            {% if product.category.name == 'Ароматерапия' %}
+            <span class="badge bg-warning text-dark" style="font-size: 0.75rem; padding: 0.35em 0.65em;">🕯️ {{ product.category.name }}</span>
+            {% elif product.category.name == 'СПА и массаж' %}
+            <span class="badge bg-success" style="font-size: 0.75rem; padding: 0.35em 0.65em;">🛁 {{ product.category.name }}</span>
+            {% else %}
+            <span class="badge bg-primary" style="font-size: 0.75rem; padding: 0.35em 0.65em;">🌙 {{ product.category.name }}</span>
+            {% endif %}
+        </div>
+
+        <h1 class="fw-bold mb-2">{{ product.name }}</h1>
+        <p class="text-muted mb-3">{{ product.description }}</p>
+
+        <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+            <span class="fs-4 fw-bold text-success">{{ product.price }} ₽</span>
+            <span class="text-muted small">Добавлено: {{ product.created_at|date:"d.m.Y" }}</span>
         </div>
     </div>
 </div>

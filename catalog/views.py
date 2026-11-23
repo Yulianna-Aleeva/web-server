@@ -18,7 +18,15 @@ class ProductListView(ListView):
     paginate_by = 3
 
     def get_queryset(self):
-        return Product.objects.select_related('category').order_by('-created_at')
+        return Product.objects.select_related('category').filter(is_available=True).order_by('-created_at')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        cats = {c.name.lower(): c.id for c in Category.objects.all()}
+        context['cat_aroma'] = cats.get('ароматерапия', '')
+        context['cat_spa'] = cats.get('спа и массаж', '')
+        context['cat_sleep'] = cats.get('сон и уют', '')
+        return context
 
 
 class ProductDetailView(DetailView):
