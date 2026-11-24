@@ -1,4 +1,4 @@
-/* Боковое меню */
+/* 1. Базовый макет (боковое меню и основной контент) */
 #main-menu {
     position: fixed;
     top: 0;
@@ -9,78 +9,78 @@
     overflow-y: auto;
 }
 
-/* Сдвиг контента под меню */
 .content-shifted {
     margin-left: 280px;
     width: calc(100% - 280px);
+    padding-bottom: 80px !important; /* Запас снизу под кнопку ИИ-ассистента */
 }
 
-/* Плитки на Главной */
-.custom-tile {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+/* 2. Типографика и резиновые кнопки */
+h1, .display-5 {
+    font-size: clamp(1.3rem, 3vw, 2.5rem) !important;
 }
 
-.custom-tile small {
-    display: block;
-    width: 100%;
-    padding: 8px 0;
-    border-radius: 6px;
-    font-weight: bold;
-    margin-top: auto;
+h2 {
+    font-size: clamp(1.1rem, 2.2vw, 1.75rem) !important;
 }
 
-/* Заголовки категорий */
-.title-cookies {
-    color: #ff8c00;
+h3, h4, h5 {
+    font-size: clamp(0.9rem, 1.6vw, 1.25rem) !important;
 }
 
-.title-hints {
-    color: #198754;
+.btn {
+    font-size: clamp(0.75rem, 1.2vw, 0.95rem);
 }
 
-.title-toys {
-    color: #0d6efd;
+/* 3. Палитра магазина (шалфейный и графитовый акценты) */
+#main-menu .nav-link.active,
+.form-check-input:checked,
+button[id*="ai"],
+.ai-chat-btn,
+#ai-chat-window .chat-header,
+#send-msg-btn,
+.btn-sage {
+    background-color: #4c6b5c !important;
+    border-color: #4c6b5c !important;
+    color: #ffffff !important;
 }
 
-/* Отображение цен */
-.price-cookies {
-    color: #ff8c00;
-    font-weight: bold;
-    font-size: 1.25rem;
+.btn-sage:hover {
+    background-color: #3d574a !important;
+    border-color: #3d574a !important;
 }
 
-.price-hints {
-    color: #198754;
-    font-weight: bold;
-    font-size: 1.25rem;
+/* 4. Пагинация */
+.pagination .page-link {
+    color: #343a40 !important;
+    font-size: clamp(0.72rem, 1.1vw, 0.9rem);
+    padding: clamp(0.25rem, 0.5vw, 0.45rem) clamp(0.45rem, 0.9vw, 0.75rem);
 }
 
-.price-toys {
-    color: #0d6efd;
-    font-weight: bold;
-    font-size: 1.25rem;
+.pagination .page-item.active .page-link {
+    background-color: #343a40 !important;
+    border-color: #343a40 !important;
+    color: #ffffff !important;
 }
 
-/* Статусы заказов */
-.status-cookies-border {
-    color: #ff8c00;
-    border: 1px solid #ff8c00;
-    border-radius: 6px;
-    font-weight: bold;
-}
+/* 5. Адаптивность (узкие и средние экраны) */
+@media (max-width: 992px) {
+    #main-menu {
+        width: 200px !important;
+    }
 
-.status-success-border {
-    color: #198754;
-    border: 1px solid #198754;
-    border-radius: 6px;
-    font-weight: bold;
-}
+    .content-shifted {
+        margin-left: 200px !important;
+        width: calc(100% - 200px) !important;
+        padding-top: 24px !important;
+    }
 
-.status-toys-border {
-    color: #0d6efd;
-    border: 1px solid #0d6efd;
-    border-radius: 6px;
-    font-weight: bold;
+    button[id*="ai"],
+    a[id*="ai"],
+    .ai-chat-btn {
+        font-size: 0.8rem !important;
+        padding: 8px 12px !important;
+        bottom: 12px !important;
+        right: 12px !important;
+    }
 }
