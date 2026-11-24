@@ -30,17 +30,19 @@
 
     <div class="mt-auto pt-3 border-top border-secondary">
         {% if user.is_authenticated %}
-        <div class="d-flex align-items-center gap-2 px-2 mb-2">
+        <a href="{% url 'users:profile' %}"
+           class="d-flex align-items-center gap-2 px-2 py-1 mb-2 text-decoration-none rounded {% if request.resolver_match.url_name == 'profile' %}bg-secondary bg-opacity-50{% endif %}"
+           title="Редактировать профиль">
             {% if user.avatar %}
             <img src="{{ user.avatar.url }}" alt="Аватар"
                  class="rounded-circle" style="width: 32px; height: 32px; object-fit: cover;">
             {% else %}
-            <span>💆‍♀️</span>
+            <span>💆</span>
             {% endif %}
-            <span class="small text-white text-truncate" title="{{ user.email }}">
+            <span class="small text-white text-truncate">
                     {{ user.first_name|default:user.email }}
                 </span>
-        </div>
+        </a>
         <form method="post" action="{% url 'users:logout' %}" class="px-2 mb-2">
             {% csrf_token %}
             <button type="submit" class="btn btn-outline-light btn-sm w-100">Выйти</button>

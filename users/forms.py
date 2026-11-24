@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
 from .models import CustomUser
 
 
@@ -45,3 +45,17 @@ class CustomAuthenticationForm(StyleFormMixin, AuthenticationForm):
         strip=False,
         widget=forms.PasswordInput(attrs={'placeholder': 'Введите пароль'})
     )
+
+
+class CustomUserChangeForm(StyleFormMixin, UserChangeForm):
+    password = None  # Скрываем служебное поле хеша пароля из формы
+
+    class Meta:
+        model = CustomUser
+        fields = ('email', 'first_name', 'last_name', 'phone_number', 'country', 'avatar')
+
+    def clean_phone_number(self):
+        phone_number = self.cleaned_data.get('phone_number')
+        if phone_number and not phone_number.isdigit():
+            raise forms.ValidationError('Номер телефона должен содержать только цифры.')
+        return phone_number
