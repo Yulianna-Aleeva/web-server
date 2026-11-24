@@ -15,28 +15,18 @@
         {% include 'catalog/includes/menu.html' %}
 
         <!-- Уникальный контент каждой страницы -->
-        <div class="content-shifted p-5">
+        <div class="content-shifted p-3 p-md-4">
             {% block content %}{% endblock %}
 
             <div class="position-fixed bottom-0 end-0 m-4" style="z-index: 1060;">
-                <button class="btn btn-primary btn-lg shadow d-flex align-items-center gap-2">
-                    <span class="emoji-robot"></span> ИИ-Ассистент
+                <button class="btn btn-sage btn-lg shadow d-flex align-items-center gap-2">
+                    🤖 ИИ-Ассистент
                 </button>
             </div>
         </div>
     </div>
 </div>
 <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-<script src="{% static 'js/emojis.js' %}"></script>
-<script src="{% static 'js/products.js' %}"></script>
-<script src="{% static 'js/menu.js' %}"></script>
-<script src="{% static 'js/store.js' %}"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const robot = document.querySelector(".emoji-robot");
-        if (robot) robot.textContent = EMOJIS.AI_ROBOT;
-    });
-</script>
 {% block extra_js %}{% endblock %}
 <script src="{% static 'js/ai_chat.js' %}"></script>
 </body>
