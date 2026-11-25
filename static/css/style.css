@@ -9,6 +9,9 @@
     overflow-y: auto;
 }
 
+body {background-color: #f3f7f4; /* Мягкий светло-фисташковый фон */}
+.category-card {background-color: #fafcfa; /* На тон светлее основного #f3f7f4 */}
+
 .content-shifted {
     margin-left: 280px;
     width: calc(100% - 280px);
@@ -16,21 +19,10 @@
 }
 
 /* 2. Типографика и резиновые кнопки */
-h1, .display-5 {
-    font-size: clamp(1.3rem, 3vw, 2.5rem) !important;
-}
-
-h2 {
-    font-size: clamp(1.1rem, 2.2vw, 1.75rem) !important;
-}
-
-h3, h4, h5 {
-    font-size: clamp(0.9rem, 1.6vw, 1.25rem) !important;
-}
-
-.btn {
-    font-size: clamp(0.75rem, 1.2vw, 0.95rem);
-}
+h1, .display-5 {font-size: clamp(1.3rem, 3vw, 2.5rem) !important;}
+h2 {font-size: clamp(1.1rem, 2.2vw, 1.75rem) !important;}
+h3, h4, h5 {font-size: clamp(0.9rem, 1.6vw, 1.25rem) !important;}
+.btn {font-size: clamp(0.75rem, 1.2vw, 0.95rem);}
 
 /* 3. Палитра магазина (шалфейный и графитовый акценты) */
 #main-menu .nav-link.active,
@@ -45,10 +37,7 @@ button[id*="ai"],
     color: #ffffff !important;
 }
 
-.btn-sage:hover {
-    background-color: #3d574a !important;
-    border-color: #3d574a !important;
-}
+.btn-sage:hover {background-color: #3d574a !important; border-color: #3d574a !important;}
 
 /* 4. Пагинация */
 .pagination .page-link {
@@ -64,11 +53,7 @@ button[id*="ai"],
 }
 
 /* 5. Адаптивность (узкие и средние экраны) */
-@media (max-width: 992px) {
-    #main-menu {
-        width: 200px !important;
-    }
-
+@media (max-width: 992px) {#main-menu {width: 200px !important;}
     .content-shifted {
         margin-left: 200px !important;
         width: calc(100% - 200px) !important;
@@ -84,3 +69,6 @@ button[id*="ai"],
         right: 12px !important;
     }
 }
+
+/* 6. Картинки лого */
+.category-logo {width: 96px; height: 96px; object-fit: cover;}

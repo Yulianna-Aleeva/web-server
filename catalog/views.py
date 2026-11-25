@@ -24,9 +24,9 @@ class ProductListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         cats = {c.name.lower(): c.id for c in Category.objects.all()}
-        context['cat_aroma'] = cats.get('ароматерапия', '')
-        context['cat_spa'] = cats.get('спа и массаж', '')
-        context['cat_sleep'] = cats.get('сон и уют', '')
+        context['cat_aroma'] = Category.objects.filter(name='Ароматерапия').first()
+        context['cat_spa'] = Category.objects.filter(name='СПА и массаж').first()
+        context['cat_sleep'] = Category.objects.filter(name='Сон и уют').first()
         return context
 
 

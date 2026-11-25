@@ -1,4 +1,5 @@
 {% extends 'catalog/base.html' %}
+{% load static %}
 
 {% block title %}Главная — Магазин{% endblock %}
 
@@ -11,52 +12,57 @@
     <p class="text-muted small">← Воспользуйтесь боковым меню для перехода в нужный раздел.</p>
 </div>
 
-<!-- Три категории магазина -->
-<div class="row g-2 g-lg-4 mb-5">
-
-    <!-- 1. Ароматерапия (жёлтая рамка) -->
-    <div class="col-4">
-        <div class="card h-100 text-center p-2 p-lg-4 shadow-sm"
-             style="border: 2px solid #ffc107; border-radius: 12px;">
-            <div class="mb-1" style="font-size: clamp(1.4rem, 3vw, 2.2rem);">🕯️</div>
-            <h5 class="fw-bold mb-1" style="font-size: clamp(0.8rem, 1.5vw, 1.2rem);">Ароматерапия</h5>
-            <p class="text-muted mb-2" style="font-size: clamp(0.68rem, 1.1vw, 0.875rem); line-height: 1.3;">
-                Эфирные масла, свечи и благовония для гармонии.
-            </p>
-            <a href="{% url 'catalog:catalog_list' %}?category={{ cat_aroma }}"
-               class="fw-semibold text-decoration-none mt-auto text-nowrap"
-               style="color: #e0a800; font-size: clamp(0.75rem, 1.2vw, 0.95rem);">Перейти →</a>
-        </div>
+<!-- Плитки категорий с логотипами -->
+<div class="row g-3 mb-5">
+    <!-- 1. Ароматерапия (logo1.jpeg) -->
+    <div class="col-12 col-md-4">
+        <a href="{% url 'catalog:catalog_list' %}{% if cat_aroma %}?category={{ cat_aroma.pk }}{% endif %}"
+           class="text-decoration-none text-dark">
+            <div class="card h-100 bg-white shadow-sm rounded-4 p-3 p-xl-4 d-flex flex-column flex-xl-row align-items-center text-center text-xl-start gap-3"
+                 style="border: 2px solid #f0c14b;">
+                <img src="{% static 'images/logo1.jpeg' %}"
+                     alt="Ароматерапия"
+                     class="rounded-circle flex-shrink-0 category-logo">
+                <div>
+                    <h5 class="fw-bold mb-1">Ароматерапия</h5>
+                    <p class="text-muted small mb-0">Эфирные масла, свечи и благовония для гармонии.</p>
+                </div>
+            </div>
+        </a>
     </div>
 
-    <!-- 2. СПА и массаж (зелёная рамка) -->
-    <div class="col-4">
-        <div class="card h-100 text-center p-2 p-lg-4 shadow-sm"
-             style="border: 2px solid #198754; border-radius: 12px;">
-            <div class="mb-1" style="font-size: clamp(1.4rem, 3vw, 2.2rem);">🛁</div>
-            <h5 class="fw-bold mb-1" style="font-size: clamp(0.8rem, 1.5vw, 1.2rem);">СПА и массаж</h5>
-            <p class="text-muted mb-2" style="font-size: clamp(0.68rem, 1.1vw, 0.875rem); line-height: 1.3;">
-                Морская соль, бомбочки для ванны и массажёры.
-            </p>
-            <a href="{% url 'catalog:catalog_list' %}?category={{ cat_spa }}"
-               class="fw-semibold text-decoration-none mt-auto text-success text-nowrap"
-               style="font-size: clamp(0.75rem, 1.2vw, 0.95rem);">Перейти →</a>
-        </div>
+    <!-- 2. СПА и массаж (logo2.jpg) -->
+    <div class="col-12 col-md-4">
+        <a href="{% url 'catalog:catalog_list' %}{% if cat_spa %}?category={{ cat_spa.pk }}{% endif %}"
+           class="text-decoration-none text-dark">
+            <div class="card h-100 bg-white shadow-sm rounded-4 p-3 p-xl-4 d-flex flex-column flex-xl-row align-items-center text-center text-xl-start gap-3"
+                 style="border: 2px solid #4c6b5c;">
+                <img src="{% static 'images/logo2.jpg' %}"
+                     alt="СПА и массаж"
+                     class="rounded-circle flex-shrink-0 category-logo">
+                <div>
+                    <h5 class="fw-bold mb-1">СПА и массаж</h5>
+                    <p class="text-muted small mb-0">Морская соль, бомбочки для ванны и массажёры.</p>
+                </div>
+            </div>
+        </a>
     </div>
 
-    <!-- 3. Сон и уют (синяя рамка) -->
-    <div class="col-4">
-        <div class="card h-100 text-center p-2 p-lg-4 shadow-sm"
-             style="border: 2px solid #0d6efd; border-radius: 12px;">
-            <div class="mb-1" style="font-size: clamp(1.4rem, 3vw, 2.2rem);">🌙</div>
-            <h5 class="fw-bold mb-1" style="font-size: clamp(0.8rem, 1.5vw, 1.2rem);">Сон и уют</h5>
-            <p class="text-muted mb-2" style="font-size: clamp(0.68rem, 1.1vw, 0.875rem); line-height: 1.3;">
-                Травяные чаи и шёлковые маски для отдыха.
-            </p>
-            <a href="{% url 'catalog:catalog_list' %}?category={{ cat_sleep }}"
-               class="fw-semibold text-decoration-none mt-auto text-dark text-nowrap"
-               style="font-size: clamp(0.75rem, 1.2vw, 0.95rem);">Перейти →</a>
-        </div>
+    <!-- 3. Сон и уют (logo3.jpeg) -->
+    <div class="col-12 col-md-4">
+        <a href="{% url 'catalog:catalog_list' %}{% if cat_sleep %}?category={{ cat_sleep.pk }}{% endif %}"
+           class="text-decoration-none text-dark">
+            <div class="card h-100 bg-white shadow-sm rounded-4 p-3 p-xl-4 d-flex flex-column flex-xl-row align-items-center text-center text-xl-start gap-3"
+                 style="border: 2px solid #5c9ce6;">
+                <img src="{% static 'images/logo3.jpeg' %}"
+                     alt="Сон и уют"
+                     class="rounded-circle flex-shrink-0 category-logo">
+                <div>
+                    <h5 class="fw-bold mb-1">Сон и уют</h5>
+                    <p class="text-muted small mb-0">Травяные чаи и шёлковые маски для отдыха.</p>
+                </div>
+            </div>
+        </a>
     </div>
 </div>
 

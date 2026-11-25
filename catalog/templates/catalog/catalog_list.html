@@ -155,8 +155,8 @@
         {% for num in page_obj.paginator.page_range %}
         <li class="page-item {% if page_obj.number == num %}active{% endif %}">
             <a class="page-link"
-               href="?page={{ num }}&category={{ selected_category }}&sort={{ selected_sort }}&per_page={{ selected_per_page }}&q={{ search_query }}">{{
-                num }}</a>
+            <!-- Если слетела пагинация, значит строка опять перенеслась. -->
+            href="?page={{ num }}&category={{ selected_category }}&sort={{ selected_sort }}&per_page={{ selected_per_page }}&q={{ search_query }}">{{ num }}</a>
         </li>
         {% endfor %}
 

@@ -1,4 +1,14 @@
+{% load static %}
+
 <nav id="main-menu" class="bg-dark text-white p-3 d-flex flex-column">
+    <div class="text-center mb-3 pt-2">
+        <a href="{% url 'catalog:home' %}" class="text-decoration-none">
+            <img src="{% static 'images/logo0.jpeg' %}"
+                 alt="MY-RELAX"
+                 class="rounded-circle shadow-sm"
+                 style="width: 96px; height: 96px; object-fit: cover; border: 2px solid #5c7c6b;">
+        </a>
+    </div>
     <h4 class="fw-bold mb-4 px-2">Меню</h4>
 
     <ul class="nav nav-pills flex-column gap-2">
