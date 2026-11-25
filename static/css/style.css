@@ -1,4 +1,4 @@
-/* 1. Базовый макет (боковое меню и основной контент) */
+/* Базовый макет (боковое меню и основной контент) */
 #main-menu {
     position: fixed;
     top: 0;
@@ -9,30 +9,23 @@
     overflow-y: auto;
 }
 
+body {
+    background-color: #f3f7f4; /* Мягкий светло-фисташковый фон */
+}
+
 .content-shifted {
     margin-left: 280px;
     width: calc(100% - 280px);
     padding-bottom: 80px !important; /* Запас снизу под кнопку ИИ-ассистента */
 }
 
-/* 2. Типографика и резиновые кнопки */
-h1, .display-5 {
-    font-size: clamp(1.3rem, 3vw, 2.5rem) !important;
-}
+/* Типографика и резиновые кнопки */
+h1, .display-5 {font-size: clamp(1.3rem, 3vw, 2.5rem) !important;}
+h2 {font-size: clamp(1.1rem, 2.2vw, 1.75rem) !important;}
+h3, h4, h5 {font-size: clamp(0.9rem, 1.6vw, 1.25rem) !important;}
+.btn {font-size: clamp(0.75rem, 1.2vw, 0.95rem);}
 
-h2 {
-    font-size: clamp(1.1rem, 2.2vw, 1.75rem) !important;
-}
-
-h3, h4, h5 {
-    font-size: clamp(0.9rem, 1.6vw, 1.25rem) !important;
-}
-
-.btn {
-    font-size: clamp(0.75rem, 1.2vw, 0.95rem);
-}
-
-/* 3. Палитра магазина (шалфейный и графитовый акценты) */
+/* Палитра магазина (шалфейный и графитовый акценты) */
 #main-menu .nav-link.active,
 .form-check-input:checked,
 button[id*="ai"],
@@ -50,7 +43,7 @@ button[id*="ai"],
     border-color: #3d574a !important;
 }
 
-/* 4. Пагинация */
+/* Пагинация */
 .pagination .page-link {
     color: #343a40 !important;
     font-size: clamp(0.72rem, 1.1vw, 0.9rem);
@@ -63,11 +56,9 @@ button[id*="ai"],
     color: #ffffff !important;
 }
 
-/* 5. Адаптивность (узкие и средние экраны) */
+/* Адаптивность (узкие и средние экраны) */
 @media (max-width: 992px) {
-    #main-menu {
-        width: 200px !important;
-    }
+    #main-menu { width: 200px !important; }
 
     .content-shifted {
         margin-left: 200px !important;
@@ -83,4 +74,43 @@ button[id*="ai"],
         bottom: 12px !important;
         right: 12px !important;
     }
+}
+
+/* Картинки лого и общие стили карточек товаров */
+.category-logo {
+    width: 96px;
+    height: 96px;
+    object-fit: cover;
+}
+
+.catalog-card {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.catalog-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.catalog-badge {
+    font-size: 0.68rem;
+    padding: 0.3em 0.6em;
+}
+
+.catalog-title {
+    font-size: clamp(0.85rem, 1.5vw, 1.15rem) !important;
+    word-break: normal;
+    overflow-wrap: break-word;
+}
+
+.catalog-desc {
+    font-size: clamp(0.75rem, 1.2vw, 0.875rem);
+    line-height: 1.35;
+}
+
+.catalog-price {
+    font-size: clamp(0.9rem, 1.5vw, 1.2rem);
 }

@@ -5,6 +5,7 @@ from .forms import BlogForm
 from .models import Blog
 from django.conf import settings
 from django.core.mail import send_mail
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 class BlogListView(ListView):
@@ -37,14 +38,14 @@ class BlogDetailView(DetailView):
         return obj
 
 
-class BlogCreateView(CreateView):
+class BlogCreateView(LoginRequiredMixin, CreateView):
     model = Blog
     form_class = BlogForm
     template_name = 'blogs/blog_form.html'
     success_url = reverse_lazy('blogs:blog_list')
 
 
-class BlogUpdateView(UpdateView):
+class BlogUpdateView(LoginRequiredMixin, UpdateView):
     model = Blog
     form_class = BlogForm
     template_name = 'blogs/blog_form.html'
@@ -53,7 +54,7 @@ class BlogUpdateView(UpdateView):
         return reverse('blogs:blog_detail', kwargs={'pk': self.object.pk})
 
 
-class BlogDeleteView(DeleteView):
+class BlogDeleteView(LoginRequiredMixin, DeleteView):
     model = Blog
     template_name = 'blogs/blog_confirm_delete.html'
     success_url = reverse_lazy('blogs:blog_list')

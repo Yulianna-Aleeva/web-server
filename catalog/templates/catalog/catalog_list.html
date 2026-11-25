@@ -3,234 +3,175 @@
 {% block title %}Каталог товаров — Магазин MY-RELAX{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center gap-2 mb-4">
-    <div>
-        <h1 class="fw-bold mb-1">🌿 Каталог товаров</h1>
-        <p class="text-muted mb-0">Выберите категорию, отсортируйте по цене или воспользуйтесь поиском.</p>
-    </div>
-    <a href="{% url 'catalog:product_create' %}" class="btn btn-dark fw-bold text-nowrap">+ Добавить товар</a>
-</div>
-
-<!-- Единая компактная панель фильтров, поиска и сортировки -->
-<div class="card shadow-sm border-0 p-2 p-md-3 mb-3" style="border-radius: 12px;">
-    <!-- Кнопки категорий -->
-    <div class="d-flex flex-wrap gap-2 mb-2">
-        <a href="?sort={{ selected_sort }}&per_page={{ selected_per_page }}&q={{ search_query }}"
-           class="btn btn-sm {% if not selected_category %}btn-dark{% else %}btn-outline-dark{% endif %}">
-            Все категории
-        </a>
-        {% for cat in categories %}
-        {% if cat.name == 'Ароматерапия' %}
-        <a href="?category={{ cat.id }}&sort={{ selected_sort }}&per_page={{ selected_per_page }}&q={{ search_query }}"
-           class="btn btn-sm {% if selected_category == cat.id|stringformat:'s' %}btn-warning fw-bold{% else %}btn-outline-warning text-dark{% endif %}">
-            🕯️ {{ cat.name }}
-        </a>
-        {% elif cat.name == 'СПА и массаж' %}
-        <a href="?category={{ cat.id }}&sort={{ selected_sort }}&per_page={{ selected_per_page }}&q={{ search_query }}"
-           class="btn btn-sm {% if selected_category == cat.id|stringformat:'s' %}btn-success fw-bold{% else %}btn-outline-success{% endif %}">
-            🛁 {{ cat.name }}
-        </a>
-        {% else %}
-        <a href="?category={{ cat.id }}&sort={{ selected_sort }}&per_page={{ selected_per_page }}&q={{ search_query }}"
-           class="btn btn-sm {% if selected_category == cat.id|stringformat:'s' %}btn-primary fw-bold{% else %}btn-outline-primary{% endif %}">
-            🌙 {{ cat.name }}
-        </a>
+<div id="catalog-container">
+    <div class="d-flex justify-content-between align-items-center gap-2 mb-4">
+        <div>
+            <h1 class="fw-bold mb-1">🌿 Каталог товаров</h1>
+            <p class="text-muted mb-0">Выберите категорию, отсортируйте по цене или воспользуйтесь поиском.</p>
+        </div>
+        {% if user.is_authenticated %}
+        <a href="{% url 'catalog:product_create' %}" class="btn btn-dark fw-bold text-nowrap">+ Добавить товар</a>
         {% endif %}
-        {% endfor %}
     </div>
 
-    <!-- Форма поиска, сортировки и количества товаров -->
-    <form method="GET" class="row g-2 align-items-center mb-0">
-        {% if selected_category %}
-        <input type="hidden" name="category" value="{{ selected_category }}">
-        {% endif %}
-
-        <div class="col-md-4">
-            <input type="text" name="q" value="{{ search_query }}" class="form-control form-control-sm"
-                   placeholder="Поиск по названию или описанию...">
+    <!-- Панель фильтров, поиска и сортировки -->
+    <div class="card shadow-sm border-0 p-2 p-md-3 mb-3 rounded-3">
+        <div class="d-flex flex-wrap gap-2 mb-2">
+            <a href="?sort={{ selected_sort }}&per_page={{ selected_per_page }}&q={{ search_query }}"
+               class="btn btn-sm {% if not selected_category %}btn-dark{% else %}btn-outline-dark{% endif %}">
+                Все категории
+            </a>
+            {% for cat in categories %}
+                {% with active=selected_category|add:'' current=cat.id|stringformat:'s' %}
+                <a href="?category={{ cat.id }}&sort={{ selected_sort }}&per_page={{ selected_per_page }}&q={{ search_query }}"
+                   class="btn btn-sm {% if cat.name == 'Ароматерапия' %}{% if active == current %}btn-warning fw-bold{% else %}btn-outline-warning text-dark{% endif %}{% elif cat.name == 'СПА и массаж' %}{% if active == current %}btn-success fw-bold{% else %}btn-outline-success{% endif %}{% else %}{% if active == current %}btn-primary fw-bold{% else %}btn-outline-primary{% endif %}{% endif %}">
+                    {% if cat.name == 'Ароматерапия' %}🕯️{% elif cat.name == 'СПА и массаж' %}🛁{% else %}🌙{% endif %} {{ cat.name }}
+                </a>
+                {% endwith %}
+            {% endfor %}
         </div>
 
-        <div class="col-md-3">
-            <select id="sort-select" name="sort" class="form-select form-select-sm">
-                <option value="-created_at">Сначала новые</option>
-                <option value="price_asc">Сначала дешевле</option>
-                <option value="price_desc">Сначала дороже</option>
-                <option value="name">По названию (А–Я)</option>
-            </select>
-        </div>
-
-        <div class="col-md-3">
-            <select id="per-page-select" name="per_page" class="form-select form-select-sm">
-                <option value="6">По 6 товаров</option>
-                <option value="9">По 9 товаров</option>
-                <option value="all">Показать все</option>
-            </select>
-        </div>
-
-        <div class="col-md-2 d-flex gap-1">
-            <button type="submit" class="btn btn-sm btn-dark w-100">Найти</button>
-            <a href="{% url 'catalog:catalog_list' %}" class="btn btn-sm btn-outline-danger" title="Сбросить">✕</a>
-        </div>
-    </form>
-</div>
-
-<!-- Сетка товаров -->
-<div class="row g-2 g-lg-4 mt-3">
-    {% for product in products %}
-    <div class="col-4">
-        <div class="card h-100 shadow-sm border-0" style="border-radius: 10px;">
-            {% if product.image %}
-            <div class="ratio ratio-4x3"
-                 style="overflow: hidden; border-top-left-radius: 10px; border-top-right-radius: 10px;">
-                <img src="{{ product.image.url }}"
-                     onerror="this.onerror=null; this.src='/media/{{ product.image.name }}';"
-                     alt="{{ product.name }}"
-                     style="width: 100%; height: 100%; object-fit: cover; object-position: center;">
+        <form method="GET" class="row g-2 align-items-center mb-0">
+            {% if selected_category %}<input type="hidden" name="category" value="{{ selected_category }}">{% endif %}
+            <div class="col-md-4">
+                <input type="text" name="q" value="{{ search_query }}" class="form-control form-control-sm" placeholder="Поиск по названию или описанию...">
             </div>
-            {% endif %}
-            <div class="card-body p-2 p-lg-3 d-flex flex-column">
-                <div class="d-flex flex-wrap justify-content-between align-items-center gap-1 mb-1">
-                    <div class="mb-2">
-                        {% if product.category.name == 'Ароматерапия' %}
-                        <span class="badge bg-warning text-dark" style="font-size: 0.68rem; padding: 0.3em 0.6em;">🕯️ {{ product.category.name }}</span>
-                        {% elif product.category.name == 'СПА и массаж' %}
-                        <span class="badge bg-success" style="font-size: 0.68rem; padding: 0.3em 0.6em;">🛁 {{ product.category.name }}</span>
-                        {% else %}
-                        <span class="badge bg-primary" style="font-size: 0.68rem; padding: 0.3em 0.6em;">🌙 {{ product.category.name }}</span>
-                        {% endif %}
-                    </div>
-                    {% if product.is_available %}
-                    <span class="badge bg-success-subtle text-success" style="font-size: 0.68rem;">В наличии</span>
-                    {% else %}
-                    <span class="badge bg-secondary-subtle text-secondary"
-                          style="font-size: 0.68rem;">Нет в наличии</span>
-                    {% endif %}
+            <div class="col-md-3">
+                <select id="sort-select" name="sort" class="form-select form-select-sm">
+                    <option value="-created_at">Сначала новые</option>
+                    <option value="price_asc">Сначала дешевле</option>
+                    <option value="price_desc">Сначала дороже</option>
+                    <option value="name">По названию (А–Я)</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select id="per-page-select" name="per_page" class="form-select form-select-sm">
+                    <option value="6">По 6 товаров</option>
+                    <option value="9">По 9 товаров</option>
+                    <option value="all">Показать все</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex gap-1">
+                <button type="submit" class="btn btn-sm btn-dark w-100">Найти</button>
+                <a href="{% url 'catalog:catalog_list' %}" class="btn btn-sm btn-outline-danger" title="Сбросить">✕</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Сетка товаров -->
+    <div class="row g-2 g-lg-4 mt-3">
+        {% for product in products %}
+        <div class="col-4">
+            <div class="card h-100 shadow-sm border-0 catalog-card">
+                {% if product.image %}
+                <div class="ratio ratio-4x3 overflow-hidden catalog-card-img">
+                    <img src="{{ product.image.url }}" onerror="this.onerror=null; this.src='/media/{{ product.image.name }}';" alt="{{ product.name }}">
                 </div>
-
-                <h5 class="card-title fw-bold mb-1" style="font-size: clamp(0.85rem, 1.5vw, 1.15rem);">
-                    {{ product.name }}
-                </h5>
-
-                <p class="card-text text-muted flex-grow-1 mb-2"
-                   style="font-size: clamp(0.75rem, 1.2vw, 0.875rem); line-height: 1.35;">
-                    {{ product.description|truncatechars:85 }}
-                </p>
-
-                <div class="d-flex flex-wrap justify-content-between align-items-center gap-1 mt-auto pt-2 border-top">
-                        <span class="fw-bold text-dark text-nowrap" style="font-size: clamp(0.9rem, 1.5vw, 1.2rem);">
-                            {{ product.price|floatformat:0 }} ₽
+                {% endif %}
+                <div class="card-body p-2 p-lg-3 d-flex flex-column">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-1 mb-2">
+                        <span class="badge catalog-badge {% if product.category.name == 'Ароматерапия' %}bg-warning text-dark{% elif product.category.name == 'СПА и массаж' %}bg-success{% else %}bg-primary{% endif %}">
+                            {% if product.category.name == 'Ароматерапия' %}🕯️{% elif product.category.name == 'СПА и массаж' %}🛁{% else %}🌙{% endif %} {{ product.category.name }}
                         </span>
-                    <a href="{% url 'catalog:product_detail' product.pk %}"
-                       class="btn btn-outline-dark btn-sm px-2 py-1"
-                       style="font-size: clamp(0.72rem, 1.1vw, 0.875rem);">
-                        Подробнее
-                    </a>
+                        <span class="badge catalog-badge {% if product.is_available %}bg-success-subtle text-success{% else %}bg-secondary-subtle text-secondary{% endif %}">
+                            {% if product.is_available %}В наличии{% else %}Нет в наличии{% endif %}
+                        </span>
+                    </div>
+
+                    <h5 class="card-title fw-bold mb-1 catalog-title">{{ product.name }}</h5>
+                    <p class="card-text text-muted flex-grow-1 mb-2 catalog-desc">{{ product.description|truncatechars:85 }}</p>
+
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-1 mt-auto pt-2 border-top">
+                        <span class="fw-bold text-dark text-nowrap catalog-price">{{ product.price|floatformat:0 }} ₽</span>
+                        <a href="{% url 'catalog:product_detail' product.pk %}" class="btn btn-outline-dark btn-sm px-2 py-1">Подробнее</a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    {% empty %}
-    <div class="col-12">
-        <div class="alert alert-light text-center py-4">
-            По вашему запросу товаров не найдено.
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-light text-center py-4">По вашему запросу товаров не найдено.</div>
         </div>
-    </div>
-    {% endfor %}
-</div>
-
-<!-- Пагинация -->
-{% if is_paginated %}
-<nav aria-label="Навигация по страницам" class="mt-4">
-    <ul class="pagination justify-content-center">
-        {% if page_obj.has_previous %}
-        <li class="page-item">
-            <a class="page-link"
-               href="?page={{ page_obj.previous_page_number }}&category={{ selected_category }}&sort={{ selected_sort }}&per_page={{ selected_per_page }}&q={{ search_query }}">←
-                Назад</a>
-        </li>
-        {% endif %}
-
-        {% for num in page_obj.paginator.page_range %}
-        <li class="page-item {% if page_obj.number == num %}active{% endif %}">
-            <a class="page-link"
-               href="?page={{ num }}&category={{ selected_category }}&sort={{ selected_sort }}&per_page={{ selected_per_page }}&q={{ search_query }}">{{ num }}</a>
-        </li>
         {% endfor %}
+    </div>
 
-        {% if page_obj.has_next %}
-        <li class="page-item">
-            <a class="page-link"
-               href="?page={{ page_obj.next_page_number }}&category={{ selected_category }}&sort={{ selected_sort }}&per_page={{ selected_per_page }}&q={{ search_query }}">Вперёд
-                →</a>
-        </li>
-        {% endif %}
-    </ul>
-</nav>
-{% endif %}
+    <!-- Пагинация -->
+    {% if is_paginated %}
+    <nav aria-label="Навигация по страницам" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}&category={{ selected_category }}&sort={{ selected_sort }}&per_page={{ selected_per_page }}&q={{ search_query }}">← Назад</a>
+            </li>
+            {% endif %}
+            {% for num in page_obj.paginator.page_range %}
+            <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                <a class="page-link" href="?page={{ num }}&category={{ selected_category }}&sort={{ selected_sort }}&per_page={{ selected_per_page }}&q={{ search_query }}">{{ num }}</a>
+            </li>
+            {% endfor %}
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}&category={{ selected_category }}&sort={{ selected_sort }}&per_page={{ selected_per_page }}&q={{ search_query }}">Вперёд →</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
 </div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const container = document.getElementById("catalog-container");
-        if (!container) return;
+document.addEventListener("DOMContentLoaded", () => {
+    const container = document.getElementById("catalog-container");
+    if (!container) return;
 
-        function syncControls() {
-            const params = new URLSearchParams(window.location.search);
-            const sortSel = document.getElementById("sort-select");
-            const perPageSel = document.getElementById("per-page-select");
-            if (sortSel) sortSel.value = params.get("sort") || "{{ selected_sort|escapejs }}";
-            if (perPageSel) perPageSel.value = params.get("per_page") || "{{ selected_per_page|escapejs }}";
-        }
+    const syncControls = () => {
+        const params = new URLSearchParams(window.location.search);
+        const sortSel = document.getElementById("sort-select");
+        const perPageSel = document.getElementById("per-page-select");
+        if (sortSel) sortSel.value = params.get("sort") || "{{ selected_sort|escapejs }}";
+        if (perPageSel) perPageSel.value = params.get("per_page") || "{{ selected_per_page|escapejs }}";
+    };
 
-        async function updateCatalog(url, scrollToTop = false) {
-            try {
-                const response = await fetch(url);
-                const html = await response.text();
-                const doc = new DOMParser().parseFromString(html, "text/html");
-                const newBlock = doc.getElementById("catalog-container");
-                if (newBlock) {
-                    container.innerHTML = newBlock.innerHTML;
-                    window.history.pushState({}, "", url);
-                    syncControls();
-                    if (scrollToTop) {
-                        window.scrollTo({ top: 0, behavior: "smooth" });
-                    }
-                }
-            } catch (err) {
-                window.location.href = url;
+    const updateCatalog = async (url, scrollToTop = false) => {
+        try {
+            const html = await (await fetch(url)).text();
+            const newBlock = new DOMParser().parseFromString(html, "text/html").getElementById("catalog-container");
+            if (newBlock) {
+                container.innerHTML = newBlock.innerHTML;
+                window.history.pushState({}, "", url);
+                syncControls();
+                if (scrollToTop) window.scrollTo({ top: 0, behavior: "smooth" });
             }
+        } catch {
+            window.location.href = url;
         }
+    };
 
-        container.addEventListener("click", function (e) {
-            const link = e.target.closest("a");
-            if (!link) return;
-            const href = link.getAttribute("href");
-            if (href && (href.startsWith("?") || href === window.location.pathname)) {
-                e.preventDefault();
-                const isPagination = Boolean(link.closest(".pagination"));
-                updateCatalog(link.href, isPagination);
-            }
-        });
+    const submitForm = form => {
+        const params = new URLSearchParams(new FormData(form));
+        updateCatalog(`${window.location.pathname}?${params.toString()}`);
+    };
 
-
-        container.addEventListener("submit", function (e) {
-            const form = e.target.closest("form");
-            if (!form) return;
+    container.addEventListener("click", e => {
+        const link = e.target.closest("a");
+        const href = link?.getAttribute("href");
+        if (href && (href.startsWith("?") || href === window.location.pathname)) {
             e.preventDefault();
-            const params = new URLSearchParams(new FormData(form));
-            updateCatalog(`${window.location.pathname}?${params.toString()}`);
-        });
-
-        container.addEventListener("change", function (e) {
-            const select = e.target.closest("select");
-            if (!select || !select.form) return;
-            const params = new URLSearchParams(new FormData(select.form));
-            updateCatalog(`${window.location.pathname}?${params.toString()}`);
-        });
-
-        syncControls();
+            updateCatalog(link.href, Boolean(link.closest(".pagination")));
+        }
     });
+
+    container.addEventListener("submit", e => {
+        if (e.target.matches("form")) { e.preventDefault(); submitForm(e.target); }
+    });
+
+    container.addEventListener("change", e => {
+        if (e.target.matches("select") && e.target.form) submitForm(e.target.form);
+    });
+
+    syncControls();
+});
 </script>
 {% endblock %}

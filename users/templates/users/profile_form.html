@@ -1,0 +1,31 @@
+{% extends 'catalog/base.html' %}
+
+{% block title %}Профиль пользователя — Магазин MY-RELAX{% endblock %}
+
+{% block content %}
+<div class="mx-auto" style="max-width: 550px;">
+    <div class="card shadow-sm border-0 p-4" style="border-radius: 12px;">
+        <div class="text-center mb-3">
+            {% if user.avatar %}
+                <img src="{{ user.avatar.url }}" alt="Аватар"
+                     class="rounded-circle shadow-sm mb-2"
+                     style="width: 90px; height: 90px; object-fit: cover;">
+            {% else %}
+                <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center mb-2"
+                     style="width: 90px; height: 90px; font-size: 2.2rem;">💆</div>
+            {% endif %}
+            <h2 class="fw-bold mb-0">Мой профиль</h2>
+            <p class="text-muted small mb-0">{{ user.email }}</p>
+        </div>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="d-flex gap-2 mt-3">
+                <button type="submit" class="btn btn-sage fw-bold flex-grow-1">Сохранить изменения</button>
+                <a href="{% url 'catalog:home' %}" class="btn btn-outline-secondary">На главную</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

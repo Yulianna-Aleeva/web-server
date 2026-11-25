@@ -10,6 +10,7 @@ from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView, TemplateView, View, UpdateView, DeleteView
 from django.utils.decorators import method_decorator
 from django.db.models import Q
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 class ProductListView(ListView):
@@ -23,26 +24,26 @@ class ProductListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         cats = {c.name.lower(): c.id for c in Category.objects.all()}
-        context['cat_aroma'] = cats.get('ароматерапия', '')
-        context['cat_spa'] = cats.get('спа и массаж', '')
-        context['cat_sleep'] = cats.get('сон и уют', '')
+        context['cat_aroma'] = Category.objects.filter(name='Ароматерапия').first()
+        context['cat_spa'] = Category.objects.filter(name='СПА и массаж').first()
+        context['cat_sleep'] = Category.objects.filter(name='Сон и уют').first()
         return context
 
 
-class ProductDetailView(DetailView):
+class ProductDetailView(LoginRequiredMixin, DetailView):
     model = Product
     template_name = 'catalog/product_detail.html'
     context_object_name = 'product'
 
 
-class ProductCreateView(CreateView):
+class ProductCreateView(LoginRequiredMixin, CreateView):
     model = Product
     form_class = ProductForm
     template_name = 'catalog/product_form.html'
     success_url = reverse_lazy('catalog:home')
 
 
-class ProductUpdateView(UpdateView):
+class ProductUpdateView(LoginRequiredMixin, UpdateView):
     model = Product
     form_class = ProductForm
     template_name = 'catalog/product_form.html'
@@ -51,7 +52,7 @@ class ProductUpdateView(UpdateView):
         return reverse('catalog:product_detail', args=[self.object.pk])
 
 
-class ProductDeleteView(DeleteView):
+class ProductDeleteView(LoginRequiredMixin, DeleteView):
     model = Product
     template_name = 'catalog/product_confirm_delete.html'
     success_url = reverse_lazy('catalog:home')
